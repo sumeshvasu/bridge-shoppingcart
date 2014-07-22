@@ -2,46 +2,31 @@
 
 /**
  * @project Bridge shoppingcart
- * Manage User actions
+ * Main controller
  */
-include_once 'controller/database-controller.php';
 
-class UserController {
+
+class AppController {
 
     public $protocal_array = '';
     public $host = '';
     public $protocal = '';
     public $request_uri_array = '';
     public $request_uri = '';
-    public $database = '';
+    //public $database = '';
 
     /**
      * Constructor
      */
     function __construct() {
-        $this->database = new DataBaseController();
-    }
-
-    /**
-     * Manage login submit
-     * @param array $post
-     */
-    function userLogin($post) {
-        $username = addslashes($post['username']);
-        $password = addslashes($post['password']);
-
-        if ($username != '' && $password != '') {
-            $this->database->userLogin($username, $password);
-        } else {
-            $_SESSION ['user_login_error'] = 1;
-        }
-    }
+        //$this->database = new DataBaseController();
+    }    
 
     /**
      * Redirect to the page
      * @param string $page
      */
-    function pageRedirect($page) {
+    function redirect($page) {
         $this->protocal_array = explode('/', $_SERVER['SERVER_PROTOCOL']);
         $this->host = $_SERVER['HTTP_HOST'] . '/';
         $this->protocal = strtolower($this->protocal_array[0]) . '://';

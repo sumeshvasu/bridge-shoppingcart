@@ -22,6 +22,7 @@
 
 <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/admin.js"></script>
 
 
 </head>

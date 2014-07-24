@@ -41,30 +41,75 @@ if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
     selectMenuItem($current_file_name);    
     if ($current_file_name == 'index') {
         include_once 'templates/home.phtml';
-    } else if ($current_file_name == 'categories') {
+    } 
+    // Categories List
+    else if ($current_file_name == 'categories') {
         include_once 'controller/category-controller.php';
         $category = new CategoryController();
         $categories = $category->get();        
         include_once 'templates/categories.phtml';
-    } else if ($current_file_name == 'new-category') {               
+    } 
+    // New category
+    else if ($current_file_name == 'new-category') {               
         include_once 'templates/new-category.phtml';
-    } else if ($current_file_name == 'edit-category') {
+    } 
+    // Edit category
+    else if ($current_file_name == 'edit-category') {
         $categoryId = $_GET['id'];
         include_once 'controller/category-controller.php';
         $category = new CategoryController();
         $categoryInfo = $category->get($categoryId);    
         include_once 'templates/new-category.phtml';
-    } else if ($current_file_name == 'delete-category') {               
+    } 
+    // Delete category
+    else if ($current_file_name == 'delete-category') {               
         include_once 'controller/category-controller.php';
         $category = new CategoryController();
         $id = $_GET['id'];
         $category->delete($id);     
         $category->redirect('index.php?page=categories');
-    } else if ($current_file_name == 'products') {
-        include_once 'products.php';
-    } else if ($current_file_name == 'purchases') {
+    } 
+    // Products listing
+    else if ($current_file_name == 'products') {
+        //include_once 'products.php';
+        include_once 'controller/product-controller.php';
+        $product = new ProductController();
+        $products = $product->get();
+        include_once 'templates/products.phtml';
+    } 
+    // New product
+    else if($current_file_name == 'new-product') {
+        include_once 'controller/category-controller.php';
+        $category = new CategoryController();
+        $categories = $category->database->resultArray($category->get());
+        include_once 'templates/new-product.phtml';
+    }
+    // Edit product
+    else if($current_file_name == 'edit-product') {
+        $productId = $_GET['id'];
+        include_once 'controller/product-controller.php';
+        $product = new ProductController();
+        $productInfo = $product->get($productId);
+        
+        include_once 'controller/category-controller.php';
+        $category = new CategoryController();
+        $categories = $category->database->resultArray($category->get());
+        include_once 'templates/new-product.phtml';
+    }
+    // Delete product
+    else if($current_file_name == 'delete-product') {
+        include_once 'controller/product-controller.php';
+        $product = new ProductController();
+        $id = $_GET['id'];
+        $product->delete($id);     
+        $product->redirect('index.php?page=products');
+    }
+    // Purchases
+    else if ($current_file_name == 'purchases') {
         include_once 'purchasess.php';
-    } else if ($current_file_name == 'customers') {
+    } 
+    // Customers
+    else if ($current_file_name == 'customers') {
         include_once 'customers.php';
     }
     

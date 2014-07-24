@@ -5,6 +5,7 @@
  * Main controller
  */
 
+include_once 'controller/database-controller.php';
 
 class AppController {
 
@@ -13,13 +14,13 @@ class AppController {
     public $protocal = '';
     public $request_uri_array = '';
     public $request_uri = '';
-    //public $database = '';
+    public $database = '';
 
     /**
      * Constructor
      */
     function __construct() {
-        //$this->database = new DataBaseController();
+        $this->database = new DataBaseController();
     }    
 
     /**

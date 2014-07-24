@@ -6,17 +6,15 @@
  */
 
 include_once 'app-controller.php';
-include_once 'database-controller.php';
+//include_once 'database-controller.php';
 
 Class CategoryController extends AppController{
     
-    public $database = '';
-
     /**
      * Constructor
      */
-    function __construct() {
-        $this->database = new DataBaseController();
+    function __construct() {        
+        parent::__construct();
     }
     
     /**

@@ -4,22 +4,21 @@
  * @project Bridge shoppingcart
  * Manage User actions
  */
-include_once 'controller/database-controller.php';
+include_once 'controller/app-controller.php';
 
-class UserController {
+class UserController extends AppController{
 
     public $protocal_array = '';
     public $host = '';
     public $protocal = '';
     public $request_uri_array = '';
-    public $request_uri = '';
-    public $database = '';
+    public $request_uri = '';    
 
     /**
      * Constructor
      */
     function __construct() {
-        $this->database = new DataBaseController();
+        parent::__construct();
     }
 
     /**

@@ -63,67 +63,152 @@ class DataBaseController {
      * Get all categories
      * @return array
      */
-    public function categoryGetAll()
-    {        
-        $query = "SELECT * FROM " . self::TABLE_PREFIX . "categories";        
-        $result = $this->commonDatabaseAction($query);        
-        if(mysql_num_rows($result) > 0) {
+    public function categoryGetAll() {
+        $query = "SELECT * FROM " . self::TABLE_PREFIX . "categories";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0) {
             return $result;
         } else {
             return array();
         }
     }
-    
+
     /**
      * Insert category
      * @param array $data
      * @return boolean
      */
-    public function categoryInsert($data)
-    {
-        if(isset($data['id'])) {
-            $query = "UPDATE " . self::TABLE_PREFIX . "categories SET name = '" . $data['name']. "', status = " . $data['status'] . " WHERE id = " . $data['id'];            
+    public function categoryInsert($data) {
+        if (isset($data['id'])) {
+            $query = "UPDATE " . self::TABLE_PREFIX . "categories SET name = '" . $data['name'] . "', status = " . $data['status'] . " WHERE id = " . $data['id'];
         } else {
-            $query = "INSERT INTO " . self::TABLE_PREFIX . "categories(id, name, status) VALUES(null, '" . $data['name']. "'," . $data['status'] . ")";
+            $query = "INSERT INTO " . self::TABLE_PREFIX . "categories(id, name, status) VALUES(null, '" . $data['name'] . "'," . $data['status'] . ")";
         }
-        $result = $this->commonDatabaseAction($query);        
-        if(mysql_affected_rows($result) > 0) {
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_affected_rows($result) > 0) {
             return TRUE;
         } else {
             return FALSE;
         }
     }
-    
+
     /**
      * Get category by id
      * @param int $id
      */
-    public function categoryById($id)
-    {
-        $query = "SELECT * FROM " . self::TABLE_PREFIX . "categories WHERE id = $id";        
-        $result = $this->commonDatabaseAction($query);        
-        if(mysql_num_rows($result) > 0) {
+    public function categoryById($id) {
+        $query = "SELECT * FROM " . self::TABLE_PREFIX . "categories WHERE id = $id";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0) {
             return mysql_fetch_assoc($result);
         } else {
             return array();
         }
     }
-    
+
     /**
      * Delete a category
      * @param int $id
      */
-    public function categoryDelete($id)
-    {        
+    public function categoryDelete($id) {
         $query = "DELETE FROM " . self::TABLE_PREFIX . "categories WHERE id = $id";
-        $result = $this->commonDatabaseAction($query);        
-        if(mysql_affected_rows($result) > 0) {
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_affected_rows($result) > 0) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * Get all products
+     * @return array
+     */
+    public function productGetAll() {
+        $query = "SELECT * FROM " . self::TABLE_PREFIX . "products";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0) {
+            return $this->resultArray($result);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Get the product by Id
+     * @param int $id
+     */
+    public function productGetById($id)
+    {
+        $query = "SELECT * FROM " . self::TABLE_PREFIX . "products WHERE id = $id";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0) {
+            return mysql_fetch_assoc($result);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Insert product data
+     * @param array $data
+     */
+    public function productInsert($data)
+    {        
+        if (isset($data['id'])) {            
+            $setValues = '';        
+            
+            foreach($data as $key => $val) {                 
+                $setValues .= $key .' = ' . $val .','; 
+            }
+            $setValues = rtrim($setValues, ',') . ' ';              
+            $query = "UPDATE " . self::TABLE_PREFIX . "products SET " . $setValues . "WHERE id = " . $data['id'];
+        } else {
+            $insertValues = 'null,';
+            foreach($data as $key => $val) {
+                $insertValues .= $val .',';
+            }
+            $insertValues = rtrim($insertValues, ',');
+            $query = "INSERT INTO " . self::TABLE_PREFIX . "products VALUES(" . $insertValues. ")";
+        }
+        
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_affected_rows($result) > 0) {
             return TRUE;
         } else {
             return FALSE;
         }
     }
     
+    /**
+     * Delete a product
+     * @param int $id
+     * @return bool
+     */
+    public function productDelete($id)
+    {
+        $query = "DELETE FROM " . self::TABLE_PREFIX . "products WHERE id = $id";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_affected_rows($result) > 0) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    
+    /**
+     * Creates an array result for a DB query
+     * @param object $result mysql result object
+     * @return array
+     */
+    public function resultArray($result) {
+        $res = array();
+        while ($row = mysql_fetch_assoc($result)) {
+            $res[] = $row; // Inside while loop
+        }
+        return $res;
+    }
+
     /**
      * Common method for Db query execution
      * @param string $query

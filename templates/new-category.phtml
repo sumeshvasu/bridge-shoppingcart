@@ -24,7 +24,7 @@ if (isset($categoryInfo)) {
                     <div class="form-group">
                         <label>Category Name</label>
                         <?php if (isset($categoryInfo)) { ?>
-                            <input type="text" name="category-id" value="<?php echo $categoryInfo['id']; ?>" />
+                            <input type="hidden" name="category-id" value="<?php echo $categoryInfo['id']; ?>" />
                             <input class="form-control" id="category-name" name="category-name" value="<?php echo $categoryInfo['name']; ?>">
                         <?php } else { ?>
                             <input class="form-control" id="category-name" name="category-name" placeholder="Enter category name" />

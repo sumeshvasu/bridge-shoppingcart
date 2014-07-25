@@ -118,7 +118,7 @@ include_once 'layout/header.php';
         $productId = $_GET['id'];
         include_once 'controller/product-controller.php';
         $product = new ProductController();
-        $productInfo = $product->get($productId);
+        $productInfo = $product->get(array('id' => $productId));
         
         include_once 'controller/category-controller.php';
         $category = new CategoryController();

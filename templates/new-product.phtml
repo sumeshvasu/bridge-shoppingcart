@@ -19,7 +19,7 @@
                     <?php if (isset($productInfo)) { ?>
                         <div class="form-group">
                             <label>Product Name</label>                        
-                            <input type="text" name="product-id" value="<?php echo $productInfo['id']; ?>" />
+                            <input type="hidden" name="product-id" value="<?php echo $productInfo['id']; ?>" />
                             <input class="form-control" id="product-name" name="product-name" value="<?php echo $productInfo['name']; ?>">
                         </div>
                         <div class="form-group">

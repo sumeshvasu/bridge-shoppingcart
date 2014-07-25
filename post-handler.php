@@ -9,17 +9,25 @@ if ( isset( $_REQUEST['action'] ) )
 	/* User Registartion */
 	if ( $_REQUEST['action'] == 'REGISTRATION' )
 	{
-		if ( $_POST['firstname'] &&  $_POST['email'] &&  $_POST['username'] && $_POST['password'] &&  $_POST['confirmpassword'] )
+		if ( ( $_POST['firstname'] ) &&  ( $_POST['email'] ) &&  ( $_POST['username'] ) && ( $_POST['password'] ) &&  ( $_POST['confirmpassword'] ) )
 		{
-			include_once 'common/common-function.php';
-			include_once 'controller/user-controller.php.php';
-			$user 		= new UserController();
+			if ( ( $_POST['password'] == $_POST['confirmpassword'] ) )
+			{
+				include_once 'common/common-function.php';
+				include_once 'controller/user-controller.php';
+				$user 		= new UserController();
 
-			$user->userRegistration( bridge_trim_deep ( $_POST ) );
+				$user->userRegistration( bridge_trim_deep ( $_POST ) );
 
 
-			/* Redirect to categories page */
-			$category->redirect("index.php?page=categories");
+				/* Redirect to categories page */
+				$user->redirect("index.php?page=login");
+			}
+			else
+			{
+				$_SESSION ['user_registration_error'] = 1;
+				$_SESSION ['user_registration_password_error'] = 1;
+			}
 		}
 		else
 		{

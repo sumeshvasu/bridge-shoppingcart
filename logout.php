@@ -11,6 +11,7 @@ if( isset( $_SESSION['user_id'] ) )
 	unset( $_SESSION['user_role'] );
 	unset( $_SESSION['user_login_error'] );
 	unset( $_SESSION['user_registration_error'] );
+	unset( $_SESSION['user_registration_password_error'] );
 
 	$applicationController = new UserController();
 	$applicationController -> redirect( 'index.php' );

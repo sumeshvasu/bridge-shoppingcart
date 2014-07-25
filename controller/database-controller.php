@@ -11,7 +11,7 @@ class DataBaseController {
     const DB_PASSWORD 	= "";
     const DB 		= "bridge-store";
     const TABLE_PREFIX 	= 'bs_';*/
-    
+
     protected $db_host;
     protected $db_user;
     protected $db_pass;
@@ -29,7 +29,7 @@ class DataBaseController {
         $this->db_pass = $config['password'];
         $this->db_name = $config['name'];
         $this->db_table_prefix = $config['table_prefix'];
-        
+
         $this->dbConnect();
     }
 
@@ -37,7 +37,7 @@ class DataBaseController {
      * Create the DB conenction
      */
     function dbConnect()
-    {        
+    {
         $link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
 
         if (!$link) {
@@ -55,10 +55,9 @@ class DataBaseController {
     function userLogin($username, $password)
     {
 
-        $pre = $this->db_table_prefix;
         $query = "SELECT *
-        		  FROM " . $pre . "users u
-        		  JOIN " . $pre . "roles r ON u.roleId = r.id
+        		  FROM " . $this->db_table_prefix. "users u
+        		  JOIN " . $this->db_table_prefix. "roles r ON u.roleId = r.id
         		  WHERE username='" . $username . "' AND password='" . $password . "'
         		  LIMIT 0,1";
 
@@ -292,6 +291,17 @@ class DataBaseController {
         } else {
             echo mysql_error();
         }
+    }
+
+    /*  */
+    function userRegistration( $first_name, $last_name, $email, $username, $password )
+    {
+
+    	$query 	= "INSERT INTO
+            	  " . $this->db_table_prefix. "users(username, password, firstName, lastName, email, roleId)
+            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". email."', 2 )";
+
+        $result 	= $this->commonDatabaseAction($query);
     }
 
 

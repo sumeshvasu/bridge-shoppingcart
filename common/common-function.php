@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * This function is used to trim array elements.
+ * @parameter array
+ */
 function bridge_trim_deep($value)
 {
 	if ( is_array($value) )
@@ -20,6 +23,14 @@ function bridge_trim_deep($value)
 	}
 
 	return $value;
+}
+
+/**
+ * This function is used to remove script tag.
+ * @parameter string
+ */
+function removeScript($data){
+	return preg_replace("/<script.+?>.+?<\/script>/im","",$data);
 }
 
 function selectMenuItem( $request_page )

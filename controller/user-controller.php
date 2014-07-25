@@ -10,12 +10,6 @@ include_once 'controller/application-controller.php';
 class UserController extends AppController
 {
 
-    public $protocal_array 		= '';
-    public $host 				= '';
-    public $protocal 			= '';
-    public $request_uri_array 	= '';
-    public $request_uri 		= '';
-
     /**
      * Constructor
      */
@@ -40,9 +34,19 @@ class UserController extends AppController
         }
     }
 
+    /**
+     * Manage user registration submit
+     * @param array $post
+     */
     function userRegistration( $post )
     {
 
+    	$first_name = addslashes($post['firstname']);
+    	$last_name 	= addslashes($post['lastname']);
+    	$email 		= addslashes($post['email']);
+    	$username	= addslashes($post['username']);
+    	$password 	= addslashes($post['password']);
+    	$this->database->userRegistration($first_name, $last_name, $email, $username, $password);
     }
 
 }

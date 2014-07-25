@@ -72,10 +72,26 @@
 					?>
 								<ul class="clearfix col-lg-12">
 									<li><a href="./index.php">Home</a></li>
-									<li><a href="./index.php?page=categories">Categories</a></li>
-									<li><a href="./index.php?page=products">Products</a></li>
-									<li><a href="./index.php?page=purchases">Purchases</a></li>
-									<li><a href="./index.php?page=customers">Customers</a></li>
+									<?php
+									if ( isset( $_SESSION['user_role'] ) && ( $_SESSION['user_role'] == 1 ) )
+									{
+									?>
+										<li><a href="./index.php?page=categories">Categories</a></li>
+										<li><a href="./index.php?page=products">Products</a></li>
+										<li><a href="./index.php?page=purchases">Purchases</a></li>
+										<li><a href="./index.php?page=customers">Customers</a></li>
+									<?php
+									}
+									else
+									{
+									?>
+										<!-- <li><a href="./index.php?page=categories">Categories</a></li>
+										<li><a href="./index.php?page=products">Products</a></li>
+										<li><a href="./index.php?page=purchases">Purchases</a></li>
+										<li><a href="./index.php?page=customers">Customers</a></li> -->
+									<?php
+									}
+									?>
 									<li id="user-link" style="float:right;"><a href="./logout.php">Sign Out</a></li>
 									<li style="float:right;">
 										<?php

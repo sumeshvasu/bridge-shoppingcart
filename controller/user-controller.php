@@ -4,6 +4,7 @@
  * @project Bridge shoppingcart
  * Manage User actions
  */
+
 include_once 'controller/application-controller.php';
 
 class UserController extends AppController

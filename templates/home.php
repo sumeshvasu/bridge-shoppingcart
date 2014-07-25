@@ -1,9 +1,11 @@
 <?php
 /**
- * @project Bridge shoppingcart
+* @project Bridge shoppingcart
  * Home page template
+ * 
  */
 ?>
+
 <div class="row">
     <div class="col-lg-12">
         <h1>User Front End <small></small></h1>

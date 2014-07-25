@@ -6,32 +6,32 @@
  */
 class UploadController {
 
-    public $max_size = 0;
-    public $max_width = 0;
-    public $max_height = 0;
-    public $max_filename = 0;
-    public $allowed_types = "";
-    public $file_temp = "";
-    public $file_name = "";
-    public $orig_name = "";
-    public $file_type = "";
-    public $file_size = "";
-    public $file_ext = "";
-    public $upload_path = "";
-    public $overwrite = FALSE;
-    public $encrypt_name = FALSE;
-    public $is_image = FALSE;
-    public $image_width = '';
-    public $image_height = '';
-    public $image_type = '';
-    public $image_size_str = '';
-    public $error_msg = array();
-    public $mimes = array();
-    public $remove_spaces = TRUE;
-    public $xss_clean = FALSE;
-    public $temp_prefix = "temp_file_";
-    public $client_name = '';
-    protected $_file_name_override = '';
+    public $max_size 				= 0;
+    public $max_width 				= 0;
+    public $max_height 				= 0;
+    public $max_filename 			= 0;
+    public $allowed_types 			= "";
+    public $file_temp 				= "";
+    public $file_name 				= "";
+    public $orig_name 				= "";
+    public $file_type 				= "";
+    public $file_size 				= "";
+    public $file_ext 				= "";
+    public $upload_path 			= "";
+    public $overwrite 				= FALSE;
+    public $encrypt_name 			= FALSE;
+    public $is_image 				= FALSE;
+    public $image_width 			= '';
+    public $image_height 			= '';
+    public $image_type 				= '';
+    public $image_size_str 			= '';
+    public $error_msg 				= array();
+    public $mimes 					= array();
+    public $remove_spaces 			= TRUE;
+    public $xss_clean 				= FALSE;
+    public $temp_prefix 			= "temp_file_";
+    public $client_name 			= '';
+    protected $_file_name_override 	= '';
 
     /**
      * Constructor
@@ -39,7 +39,6 @@ class UploadController {
      * @access	public
      */
     public function __construct($props = array()) {
-        
         //print_r($props);die();
         if (count($props) > 0) {
             $this->initialize($props);
@@ -90,18 +89,17 @@ class UploadController {
 
 
         foreach ($defaults as $key => $val) {
-            if (isset($config[$key])) {                
+            if (isset($config[$key])) {
                 $method = 'set_' . $key;
-                if (method_exists($this, $method)) {                    
+                if (method_exists($this, $method)) {
                     $this->$method($config[$key]);
                 } else {
                     $this->$key = $config[$key];
-                }                
+                }
             } else {
                 $this->$key = $val;
-            }            
-        }        
-        
+            }
+        }
 
         // if a file_name was provided in the config, use it instead of the user input
         // supplied file name for all uploads until initialized again
@@ -115,23 +113,23 @@ class UploadController {
      *
      * @return	bool
      */
-    public function do_upload($field = 'userfile') {        
+    public function do_upload($field = 'userfile') {
         // Is $_FILES[$field] set? If not, no reason to continue.
         if (!isset($_FILES[$field])) {
             $this->set_error('upload_no_file_selected');
             return FALSE;
         }
-        
+
         // Is the upload path valid?
         if (!$this->validate_upload_path()) {
             // errors will already be set by validate_upload_path() so just return FALSE
             return FALSE;
         }
-        
+
         // Was the file able to be uploaded? If not, determine the reason why.
         if (!is_uploaded_file($_FILES[$field]['tmp_name'])) {
             $error = (!isset($_FILES[$field]['error'])) ? 4 : $_FILES[$field]['error'];
-            
+
             switch ($error) {
                 case 1: // UPLOAD_ERR_INI_SIZE
                     $this->set_error('upload_file_exceeds_limit');
@@ -171,8 +169,8 @@ class UploadController {
         $this->file_name = $this->_prep_filename($_FILES[$field]['name']);
         $this->file_ext = $this->get_extension($this->file_name);
         $this->client_name = $this->file_name;
-        
-        
+
+
         // Is the file type allowed to be uploaded?
         if (!$this->is_allowed_filetype()) {
             $this->set_error('upload_invalid_filetype');
@@ -323,7 +321,11 @@ class UploadController {
      */
     public function set_upload_path($path) {
         // Make sure it has a trailing slash
-        $this->upload_path = rtrim($path, '/') . '/';        
+<<<<<<< HEAD
+        $this->upload_path = rtrim($path, '/') . '/';
+=======
+        $this->upload_path = rtrim($path, '/') . '/';
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
     }
 
     // --------------------------------------------------------------------
@@ -428,7 +430,11 @@ class UploadController {
             $this->allowed_types = '*';
             return;
         }
-        $this->allowed_types = explode('|', $types);        
+<<<<<<< HEAD
+        $this->allowed_types = explode('|', $types);
+=======
+        $this->allowed_types = explode('|', $types);
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
     }
 
     // --------------------------------------------------------------------
@@ -511,7 +517,11 @@ class UploadController {
      *
      * @return	bool
      */
-    public function is_allowed_filetype($ignore_mime = TRUE) {        
+<<<<<<< HEAD
+    public function is_allowed_filetype($ignore_mime = TRUE) {
+=======
+    public function is_allowed_filetype($ignore_mime = TRUE) {
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
         if ($this->allowed_types == '*') {
             return TRUE;
         }
@@ -523,10 +533,17 @@ class UploadController {
 
         $ext = strtolower(ltrim($this->file_ext, '.'));
 
-        if (!in_array($ext, $this->allowed_types)) {            
+<<<<<<< HEAD
+        if (!in_array($ext, $this->allowed_types)) {
             return FALSE;
         }
-        
+
+=======
+        if (!in_array($ext, $this->allowed_types)) {
+            return FALSE;
+        }
+
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
 
         // Images get some additional checks
         $image_types = array('gif', 'jpg', 'jpeg', 'png', 'jpe');
@@ -609,26 +626,47 @@ class UploadController {
      * @return	bool
      */
     public function validate_upload_path() {
-        
-        if ($this->upload_path == '') {            
+<<<<<<< HEAD
+
+        if ($this->upload_path == '') {
+=======
+
+        if ($this->upload_path == '') {
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
             $this->set_error('upload_no_filepath');
             return FALSE;
         }
 
-        if (function_exists('realpath') AND @ realpath($this->upload_path) !== FALSE) {            
+<<<<<<< HEAD
+        if (function_exists('realpath') AND @ realpath($this->upload_path) !== FALSE) {
             $this->upload_path = str_replace("\\", "/", realpath($this->upload_path));
         }
 
-        /*if (!@is_dir($this->upload_path)) {            
+        /*if (!@is_dir($this->upload_path)) {
+=======
+        if (function_exists('realpath') AND @ realpath($this->upload_path) !== FALSE) {
+            $this->upload_path = str_replace("\\", "/", realpath($this->upload_path));
+        }
+
+        /*if (!@is_dir($this->upload_path)) {
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
             $this->set_error('upload_no_filepath');
             return FALSE;
         }
 
-        if (!is_really_writable($this->upload_path)) {            
+<<<<<<< HEAD
+        if (!is_really_writable($this->upload_path)) {
             $this->set_error('upload_not_writable');
             return FALSE;
         }*/
-        
+
+=======
+        if (!is_really_writable($this->upload_path)) {
+            $this->set_error('upload_not_writable');
+            return FALSE;
+        }*/
+
+>>>>>>> 94bd0ed49d596d69056daed0fe0bfc41e50f7eb9
         $this->upload_path = preg_replace("/(.+?)\/*$/", "\\1/", $this->upload_path);
         return TRUE;
     }

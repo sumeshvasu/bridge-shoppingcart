@@ -1,14 +1,21 @@
 <?php
 
-function bridge_trim_deep($value) {
-	if ( is_array($value) ) {
+function bridge_trim_deep($value)
+{
+	if ( is_array($value) )
+	{
 		$value = array_map('bridge_trim_deep', $value);
-	} elseif ( is_object($value) ) {
+	}
+	elseif ( is_object($value) )
+	{
 		$vars = get_object_vars( $value );
-		foreach ($vars as $key=>$data) {
+		foreach ( $vars as $key=>$data )
+		{
 			$value->{$key} = bridge_trim_deep( $data );
 		}
-	} else {
+	}
+	else
+	{
 		$value = trim($value);
 	}
 

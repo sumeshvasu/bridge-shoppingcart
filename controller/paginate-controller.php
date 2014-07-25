@@ -5,29 +5,33 @@
  * Pagination class
  */
 
-Class PaginateController {
+Class PaginateController
+{
 
     /**
      * Constructor
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
+
     }
-    
+
     /**
      * Create a pagination flow
      * @param int $perPage
      * @param array $result
      * @return array
      */
-    public function setPagination($perPage, $result) {
+    public function setPagination($perPage, $result)
+    {
         // Pagination
-        $per_page = $perPage;
+        $per_page 		= $perPage;
         //$result = $products;
-        $total_results = count($result);
-        $total_pages = ceil($total_results / $per_page); //total pages we going to have
+        $total_results 	= count($result);
+        $total_pages 	= ceil($total_results / $per_page); //total pages we going to have
         //-------------if page is set check------------------//
-        $show_page = 1;
+        $show_page 		= 1;
+
         if (isset($_GET['pageNo'])) {
             $show_page = $_GET['pageNo'];             //it will telles the current page
             if ($show_page > 0 && $show_page <= $total_pages) {

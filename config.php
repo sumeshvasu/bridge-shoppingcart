@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Bridge Shopping Cart 
+ * Bridge Shopping Cart
   Db and other config settings
  */
 
@@ -13,7 +13,7 @@ function getDbConfig()
     return array(
         'host'         => 'localhost',
         'user'         => 'root',
-        'password'     => 'root',
+        'password'     => '',
         'name'         => 'bridge-store',
         'table_prefix' => 'bs_'
     );

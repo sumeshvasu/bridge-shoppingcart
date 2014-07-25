@@ -46,7 +46,9 @@ class UserController extends AppController
     	$email 		= addslashes($post['email']);
     	$username	= addslashes($post['username']);
     	$password 	= addslashes($post['password']);
-    	$this->database->userRegistration($first_name, $last_name, $email, $username, $password);
+    	$result 	= $this->database->userRegistration($first_name, $last_name, $email, $username, $password);
+    	return $result;
+
     }
 
 }

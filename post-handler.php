@@ -17,11 +17,21 @@ if ( isset( $_REQUEST['action'] ) )
 				include_once 'controller/user-controller.php';
 				$user 		= new UserController();
 
-				$user->userRegistration( bridge_trim_deep ( $_POST ) );
+				$result 	= $user->userRegistration( bridge_trim_deep ( $_POST ) );
 
+				$_SESSION ['user_registration_error'] 			= '';
+				$_SESSION ['user_registration_password_error'] 	= '';
 
-				/* Redirect to categories page */
-				$user->redirect("index.php?page=login");
+				if ( $result )
+				{
+					/* Redirect to categories page */
+					$user->redirect("index.php?page=login");
+				}
+				else
+				{
+					$_SESSION ['user_registration_username_error'] 	= 1;
+				}
+
 			}
 			else
 			{

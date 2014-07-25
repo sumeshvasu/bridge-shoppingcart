@@ -5,6 +5,7 @@
  * Manage database queries and methods
  */
 
+
 include_once 'config.php';
 
 class DataBaseController {
@@ -290,16 +291,48 @@ class DataBaseController {
         }
     }
 
+    /**
+     * This function used to return a field value FROM database.
+     * @parameter 1.query, 2.status
+     *
+     */
+    function singlevalue($sql,$stat=FALSE) {
+
+    	$result = $this->commonDatabaseAction($sql);
+
+    	if (mysql_num_rows($result)){
+    		$returnResult = mysql_result($result,0);
+    	}else {
+    		if ($stat==true) {
+    			$returnResult = "";
+    		}else {
+    			$returnResult = 0;
+    		}
+    	}
+    	return $returnResult;
+    }
+
     /*  */
     function userRegistration( $first_name, $last_name, $email, $username, $password )
     {
 
-    	$query 	= "INSERT INTO
-            	  " . $this->db_table_prefix. "users(username, password, firstName, lastName, email, roleId)
-            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". email."', 2 )";
+    	$checking_query	= "SELECT *
+						   " . $this->db_table_prefix. "users
+					       WHERE username='".$username."' AND type='2'
+  		     			   LIMIT 0,1";
 
-        $result 	= $this->commonDatabaseAction($query);
+    	if( $this->singlevalue( $checking_query ) == 0 ) {
+	    	$query 	= "INSERT INTO
+	            	  " . $this->db_table_prefix. "users(username, password, firstName, lastName, email, roleId)
+	            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". email."', 2 )";
+
+	    	$this->commonDatabaseAction($query);
+	    	return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
     }
-
 
 }

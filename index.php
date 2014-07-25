@@ -16,7 +16,6 @@ if (! isset ( $_SESSION ['user_id'] ))
 include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
 
-
 $user 	= new UserController ();
 $application 	= new AppController ();
 

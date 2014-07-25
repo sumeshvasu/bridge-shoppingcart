@@ -6,12 +6,6 @@
  */
 class DataBaseController {
 
-    /*const DB_SERVER 	= "localhost";
-    const DB_USER 	= "root";
-    const DB_PASSWORD 	= "";
-    const DB 		= "bridge-store";
-    const TABLE_PREFIX 	= 'bs_';*/
-
     protected $db_host;
     protected $db_user;
     protected $db_pass;

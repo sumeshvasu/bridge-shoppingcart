@@ -4,6 +4,9 @@
  * @project Bridge shoppingcart
  * Manage database queries and methods
  */
+
+include_once 'config.php';
+
 class DataBaseController {
 
     protected $db_host;

@@ -15,7 +15,7 @@ if (! isset ( $_SESSION ['user_id'] ))
 
 include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
-include_once 'config.php';
+
 
 $user 	= new UserController ();
 $application 	= new AppController ();
@@ -67,6 +67,9 @@ selectMenuItem ( $current_file_name );
 
 if ( $current_file_name == 'index' )
 {
+        include_once 'controller/product-controller.php';
+        $product = new ProductController();
+        $products = $product->get();
 	include_once 'templates/home.php';
 }
 // Login page

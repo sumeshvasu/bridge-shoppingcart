@@ -21,13 +21,15 @@
 <link rel="stylesheet" href="css/jquery-ui.css">
 
 <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script type="text/javascript"  src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/admin.js"></script>
 
 
 </head>
 <body>
 	<script>
-		$(function() {
+		$( function() {
 			$( "#login-error-banner" ).hide();
 			var pull 		= $('#pull');
 				menu 		= $('nav ul');
@@ -71,34 +73,44 @@
 
 						</div>
 					</div>
+					<div class="panel-footer announcement-bottom">
+						<div class="row ">
+							<nav class="clearfix">
 					<?php
 					if ( isset( $_SESSION ['user_id'] ) && ($_SESSION ['user_id'] != '' ) )
 					{
 					?>
-					<div class="panel-footer announcement-bottom">
-						<div class="row ">
-							<nav class="clearfix">
 								<ul class="clearfix col-lg-12">
 									<li><a href="./index.php">Home</a></li>
 									<li><a href="./index.php?page=categories">Categories</a></li>
 									<li><a href="./index.php?page=products">Products</a></li>
 									<li><a href="./index.php?page=purchases">Purchases</a></li>
 									<li><a href="./index.php?page=customers">Customers</a></li>
-									<li id="user-link" style="float:right;"><a href="./logout.php">Logout</a></li>
+									<li id="user-link" style="float:right;"><a href="./logout.php">Sign Out</a></li>
 									<li style="float:right;">
 										<?php
 											echo $_SESSION['user_first_name'].' '.$_SESSION['user_last_name']
 										?>
 									</li>
 								</ul>
+					<?php
+					}
+					else
+					{
+					?>
+						<ul class="clearfix col-lg-12">
+									<li id="user-link" style="float:right;"><a href="./index.php?page=login">Sign In</a></li>
+									<li id="user-link" style="float:right;"><a href="./index.php?page=registration">Sign Up</a></li>
+
+								</ul>
+					<?php
+					}
+					?>
 
 								<span id="pull">&nbsp;</span>
 							</nav>
 						</div>
 					</div>
-					<?php
-					}
-					?>
 
 				</div>
 			</div>

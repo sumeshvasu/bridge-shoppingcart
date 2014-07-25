@@ -12,7 +12,7 @@ if( isset( $_SESSION['user_id'] ) )
 	unset( $_SESSION['user_login_error'] );
 
 	$applicationController = new UserController();
-	$applicationController -> pageRedirect( 'index.php' );
+	$applicationController -> redirect( 'index.php' );
 
  }
 ?>

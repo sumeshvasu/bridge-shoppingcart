@@ -1,9 +1,14 @@
 <?php
-session_start();
+/**
+ * @project Bridge shoppingcart
+ * Main Index page
+ *
+ */
+session_start ();
 
-error_reporting(E_ALL);
+error_reporting ( E_ALL );
 
-if( !isset( $_SESSION ['user_id'] ) )
+if (! isset ( $_SESSION ['user_id'] ))
 {
 	$_SESSION ['user_id'] = '';
 }
@@ -11,125 +16,193 @@ if( !isset( $_SESSION ['user_id'] ) )
 include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
 
-$user		= new UserController();
+$user 	= new UserController ();
+$app 	= new AppController ();
 
-
-if( ( isset( $_POST ) ) && ( isset( $_POST['btnLoginSubmit'] ) ) )
+if ( (isset ( $_POST ) ) && (isset ( $_POST ['btnLoginSubmit'] ) ) )
 {
-	$user->userLogin(  bridge_trim_deep( $_POST ) );
-}
+	$user->userLogin ( bridge_trim_deep ( $_POST ) );
 
-
-include_once 'layout/header.php';
-
-if ( isset( $_SESSION ['user_id'] ) && ($_SESSION ['user_id'] == '' ) )
-{
-	include_once 'login.php';
-}
-else
-{
-	//echo $_SERVER['REQUEST_URI'];
-	$current_file_name = basename($_SERVER['REQUEST_URI'], ".php");
-	$current_file_name = '';
-
-	if( basename($_SERVER['REQUEST_URI'], ".php") == 'index' )
+	if (isset ( $_SESSION ['user_id'] ) && $_SESSION ['user_role'] == 1 )
 	{
-		$current_file_name = 'index';
+		$app->redirect ( 'index.php?page=dashboard' );
 	}
 	else
 	{
-		$current_file_name = $_GET['page'];
+		$app->redirect ( 'index.php?page=home' );
 	}
-
-
-
-
-
-/*
-	$indicesServer = array('PHP_SELF',
-					'argv',
-					'argc',
-					'GATEWAY_INTERFACE',
-					'SERVER_ADDR',
-					'SERVER_NAME',
-					'SERVER_SOFTWARE',
-					'SERVER_PROTOCOL',
-					'REQUEST_METHOD',
-					'REQUEST_TIME',
-					'REQUEST_TIME_FLOAT',
-					'QUERY_STRING',
-					'DOCUMENT_ROOT',
-					'HTTP_ACCEPT',
-					'HTTP_ACCEPT_CHARSET',
-					'HTTP_ACCEPT_ENCODING',
-					'HTTP_ACCEPT_LANGUAGE',
-					'HTTP_CONNECTION',
-					'HTTP_HOST',
-					'HTTP_REFERER',
-					'HTTP_USER_AGENT',
-					'HTTPS',
-					'REMOTE_ADDR',
-					'REMOTE_HOST',
-					'REMOTE_PORT',
-					'REMOTE_USER',
-					'REDIRECT_REMOTE_USER',
-					'SCRIPT_FILENAME',
-					'SERVER_ADMIN',
-					'SERVER_PORT',
-					'SERVER_SIGNATURE',
-					'PATH_TRANSLATED',
-					'SCRIPT_NAME',
-					'REQUEST_URI',
-					'PHP_AUTH_DIGEST',
-					'PHP_AUTH_USER',
-					'PHP_AUTH_PW',
-					'AUTH_TYPE',
-					'PATH_INFO',
-					'ORIG_PATH_INFO') ;
-
-			echo '<table cellpadding="10">' ;
-			foreach ($indicesServer as $arg) {
-			    if (isset($_SERVER[$arg])) {
-			        echo '<tr><td>'.$arg.'</td><td>' . $_SERVER[$arg] . '</td></tr>' ;
-			    }
-			    else {
-			        echo '<tr><td>'.$arg.'</td><td>-</td></tr>' ;
-			    }
-			}
-			echo '</table>' ;
-*/
-
-
-	selectMenuItem( $current_file_name );
-
-	if( $current_file_name == 'index' )
-	{
-		include_once 'home.php';
-	}
-	else if( $current_file_name == 'category' )
-	{
-		include_once 'categories.php';
-	}
-	else if( $current_file_name == 'product' )
-	{
-		include_once 'products.php';
-	}
-	else if( $current_file_name == 'purchase' )
-	{
-		include_once 'purchasess.php';
-	}
-	else if( $current_file_name == 'customer' )
-	{
-		include_once 'customers.php';
-	}
-
-?>
-<div class="row">
-
-
-
-</div>
-<?php
 }
+
+include_once 'layout/header.php';
+
+$current_file_name = basename ( $_SERVER ['REQUEST_URI'], ".php" );
+$current_file_name = '';
+
+if (basename ( $_SERVER ['REQUEST_URI'], ".php" ) == 'index' )
+{
+	$current_file_name = 'index';
+}
+else
+{
+	if( isset( $_GET ['page'] ) )
+	{
+		$current_file_name = $_GET ['page'];
+	}
+	else
+	{
+		$current_file_name = 'index';
+	}
+}
+
+selectMenuItem ( $current_file_name );
+
+if ( $current_file_name == 'index' )
+{
+	include_once 'templates/home.php';
+}
+// Login page
+else if ( $current_file_name == 'login' )
+{
+	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
+	{
+		include_once 'templates/login.php';
+	}
+	else
+	{
+		if ( $_SESSION ['user_role'] == 1 )
+		{
+			$app->redirect ( 'index.php?page=dashboard' );
+		}
+		else
+		{
+			include_once 'templates/home.php';
+		}
+	}
+}
+// Registartion
+else if ($current_file_name == 'registration')
+{
+	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
+	{
+		include_once 'templates/registration.php';
+	}
+	else
+	{
+		if ( $_SESSION ['user_role'] == 1 )
+		{
+			$app->redirect ( 'index.php?page=dashboard' );
+		}
+		else
+		{
+			include_once 'templates/home.php';
+		}
+	}
+}
+// Dashboard
+else if ( $current_file_name == 'dashboard' )
+{
+	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
+	{
+		$app->redirect ( 'index.php?page=login' );
+	}
+	else
+	{
+		include_once 'templates/admin-dashboard.php';
+	}
+}
+// Categories List
+else if ( $current_file_name == 'categories' )
+{
+	include_once 'controller/category-controller.php';
+	include_once 'controller/paginate-controller.php';
+
+	$paginator 		= new PaginateController ();
+	$category 		= new CategoryController ();
+	$categories 	= $category->get ();
+
+	include_once 'templates/categories.php';
+}
+// New category
+else if ( $current_file_name == 'new-category' )
+{
+	include_once 'templates/new-category.php';
+}
+// Edit category
+else if ( $current_file_name == 'edit-category' )
+{
+	$categoryId 	= $_GET ['id'];
+
+	include_once 'controller/category-controller.php';
+	$category 		= new CategoryController ();
+	$category_info 	= $category->get ( $categoryId );
+
+	include_once 'templates/new-category.php';
+}
+// Delete category
+else if ( $current_file_name == 'delete-category' )
+{
+	include_once 'controller/category-controller.php';
+	$category 	= new CategoryController ();
+	$id 		= $_GET ['id'];
+	$category->delete ( $id );
+	$category->redirect ( 'index.php?page=categories' );
+}
+// Products listing
+else if ( $current_file_name == 'products' )
+{
+	// include_once 'products.php';
+	include_once 'controller/product-controller.php';
+	include_once 'controller/paginate-controller.php';
+
+	$paginator 	= new PaginateController ();
+	$product 	= new ProductController ();
+	$filters 	= (! empty ( $_GET )) ? $_GET : array ();
+	$products 	= $product->get ( $filters );
+
+	include_once 'templates/products.php';
+}
+// New product
+else if ( $current_file_name == 'new-product' )
+{
+	include_once 'controller/category-controller.php';
+	$category 	= new CategoryController ();
+	$categories = $category->get ();
+
+	include_once 'templates/new-product.php';
+}
+// Edit product
+else if ( $current_file_name == 'edit-product' )
+{
+	$productId = $_GET ['id'];
+	include_once 'controller/product-controller.php';
+	$product 		= new ProductController ();
+	$product_info 	= $product->get( array( 'id' => $productId ) );
+
+	include_once 'controller/category-controller.php';
+	$category 	= new CategoryController ();
+	$categories = $category->get ();
+
+	include_once 'templates/new-product.php';
+}
+// Delete product
+else if ( $current_file_name == 'delete-product' )
+{
+	include_once 'controller/product-controller.php';
+	$product 	= new ProductController ();
+	$id 		= $_GET ['id'];
+	$product->delete ( $id );
+	$product->redirect ( 'index.php?page=products' );
+}
+// Purchases
+else if ( $current_file_name == 'purchases' )
+{
+	include_once 'purchases.php';
+}
+// Customers
+else if ( $current_file_name == 'customers' )
+{
+	include_once 'customers.php';
+}
+
 include_once 'layout/footer.php';
 ?>

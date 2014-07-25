@@ -5,11 +5,7 @@
  */
 ?>
 
-<?php
-if (isset($productInfo)) {
-    
-}
-?>
+
 <div class="row">
     <div class="col-lg-12">
         <h1>Product <small></small></h1>
@@ -26,41 +22,41 @@ if (isset($productInfo)) {
                             <input type="text" name="product-id" value="<?php echo $productInfo['id']; ?>" />
                             <input class="form-control" id="product-name" name="product-name" value="<?php echo $productInfo['name']; ?>">
                         </div>
-                    <div class="form-group">
+                        <div class="form-group">
                             <label>Description </label>                            
-                            <textarea class="form-control" rows="3" name="product-desc"><?php echo $productInfo['description'];?></textarea>
+                            <textarea class="form-control" rows="3" name="product-desc"><?php echo $productInfo['description']; ?></textarea>
                         </div>
                         <div class="form-group">
                             <label>Price</label>
-                            <input class="form-control" id="product-price" name="product-price" placeholder="Enter product price" value="<?php echo $productInfo['price'];?>"/>                        
+                            <input class="form-control" id="product-price" name="product-price" placeholder="Enter product price" value="<?php echo $productInfo['price']; ?>"/>                        
                         </div>
                         <div class="form-group">
                             <label>Category</label>
                             <select class="form-control" name="product-cat">
-                                <?php foreach($categories as $cat) { ?>
-                                    <?php if($productInfo['catId'] == $cat['id']) { ?>
-                                        <option value="<?php echo $cat['id'];?>" selected="selected"><?php echo $cat['name'];?></option>
+                                <?php foreach ($categories as $cat) { ?>
+                                    <?php if ($productInfo['catId'] == $cat['id']) { ?>
+                                        <option value="<?php echo $cat['id']; ?>" selected="selected"><?php echo $cat['name']; ?></option>
                                     <?php } else { ?>
-                                        <option value="<?php echo $cat['id'];?>"><?php echo $cat['name'];?></option>
+                                        <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
                                     <?php } ?>
                                 <?php } ?>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Download Link Validity</label>
-                            <input class="form-control" id="product-validity" name="product-validity" placeholder="" value="<?php echo $productInfo['validity'];?>"/>                        
+                            <input class="form-control" id="product-validity" name="product-validity" placeholder="" value="<?php echo $productInfo['validity']; ?>"/>                        
                         </div>
                         <div class="form-group">
                             <label>Download Link</label>
-                            <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" value="<?php echo $productInfo['downloadLink'];?>"/>                        
+                            <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" value="<?php echo $productInfo['downloadLink']; ?>"/>                        
                         </div>
                         <div class="form-group">
-                            <img src="uploads/<?php echo $productInfo['imagePath'];?>" width="100" height="100" />
-                            <input type="hidden" name="hid-product-image" value="<?php echo $productInfo['imagePath'];?>">
+                            <img src="uploads/<?php echo $productInfo['imagePath']; ?>" width="100" height="100" />
+                            <input type="hidden" name="hid-product-image" value="<?php echo $productInfo['imagePath']; ?>">
                             <label>Image</label>                            
                             <input type="file" id="product-image" name="product-image">
                         </div>
-                        
+
                     <?php } else { ?>
                         <div class="form-group">
                             <label>Product Name</label>
@@ -68,7 +64,7 @@ if (isset($productInfo)) {
                         </div>
                         <div class="form-group">
                             <label>Description </label>                            
-                            <textarea class="form-control" rows="3" name="product-desc"></textarea>
+                            <textarea class="form-control" rows="3" id="product-desc" name="product-desc"></textarea>
                         </div>
                         <div class="form-group">
                             <label>Price</label>
@@ -77,8 +73,8 @@ if (isset($productInfo)) {
                         <div class="form-group">
                             <label>Category</label>
                             <select class="form-control" name="product-cat">
-                                <?php foreach($categories as $cat) { ?>
-                                    <option value="<?php echo $cat['id'];?>"><?php echo $cat['name'];?></option>
+                                <?php foreach ($categories as $cat) { ?>
+                                    <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -137,17 +133,52 @@ if (isset($productInfo)) {
 </div>
 
 
-
 <script type="text/javascript">
-    $(function() {
-        $('#new-product-form').submit(function() {
-            catName = $('#product-name').val();
-            if (catName == '') {
-                $('#product-name').attr('placeholder', 'Product name is required');
+    $(document).ready(function() {
+        $('#new-product-form').submit(function(e) {
+            flag = true;
+            productName = $('#product-name').val();
+            $('#product-name').removeAttr('style');
+            $('#product-desc').removeAttr('style');
+            $('#product-price').removeAttr('style');
+            $('#product-validity').removeAttr('style');
+
+            flag1 = validate('name', 'Product name is required', 'required');
+            flag2 = validate('desc', 'Description is required', 'required');
+            flag3 = validate('price', 'Price should be a numeric field', 'numeric');
+            flag4 = validate('validity', 'Validity should be a numeric field', 'numeric');
+
+            flag = flag1 && flag2 && flag3 && flag4;
+
+            if (flag) {
+                return;
             } else {
-                $('#new-product-form').submit();
+                e.preventDefault();
             }
         });
     });
+
+    function validate(field, message, filter)
+    {
+        valid = false;
+        if(filter === 'required') {
+            valid = ($('#product-' + field).val() != '') ? true : false;
+        } else if(filter === 'numeric') {
+            valid = $.isNumeric($('#product-' + field).val());
+        } else {
+            valid = true;
+        }
+        
+        if (!valid) {
+            $('#product-' + field).val('');
+            $('#product-' + field).attr('placeholder', message);
+            $('#product-' + field).css('border-color', 'red');
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    
 </script>
 

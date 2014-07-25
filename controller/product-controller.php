@@ -24,13 +24,15 @@ class ProductController extends AppController{
 
     /**
      * Get all products/Specific product
-     * @param int $id
+     * @param array $filters
      * @return array
      */
-    public function get($id = null)
-    {
-        if($id != null) {
-            $result = $this->database->productGetById($id);
+    public function get($filters = array())
+    {        
+        if(isset($filters['id'])) {
+            $result = $this->database->productGetById($filters['id']);
+        } else if(isset($filters['catId'])) {            
+            $result = $this->database->productGetByCategory($filters['catId']);            
         } else {
             $result = $this->database->productGetAll();
         }

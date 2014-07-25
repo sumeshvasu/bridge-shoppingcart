@@ -51,14 +51,13 @@ if (isset($_REQUEST['action'])) {
         $data['name'] = "'". mysql_escape_string($_POST['product-name']) ."'";
         $data['description'] = "'". mysql_escape_string($_POST['product-desc']) ."'";
         $data['catId'] = $_POST['product-cat'];
-        $data['price'] = $_POST['product-price'];
+        $data['price'] = (is_numeric($_POST['product-price'])) ? $_POST['product-price'] : 0;
         $data['downloadLink'] = "'" . $_POST['product-link'] . "'";
-        $data['validity'] = $_POST['product-validity'];                
+        $data['validity'] = (is_numeric($_POST['product-validity'])) ? $_POST['product-validity'] : 0;
         $data['imagePath'] = "'" . $uploadedFile . "'";
-        $data['status'] = $_POST['product-status']; 
+        $data['status'] = $_POST['product-status'];
         
         $result = $product->insert($data);
-        
         
         // Redirect to categories page
         $product->redirect("index.php?page=products");

@@ -16,18 +16,22 @@ include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
 
 $user = new UserController();
-
+$app = new AppController();
 
 if (( isset($_POST) ) && ( isset($_POST['btnLoginSubmit']) )) {
     $user->userLogin(bridge_trim_deep($_POST));
+    if(isset($_SESSION ['user_id']) && $_SESSION ['user_role'] == 1) {        
+        $app->redirect('index.php?page=dashboard');
+    } else {
+        $app->redirect('index.php?page=home');
+    }
 }
-
 
 include_once 'layout/header.php';
 
-if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
+/*if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
     include_once 'login.php';
-} else {
+} else { */
     //echo $_SERVER['REQUEST_URI'];
     $current_file_name = basename($_SERVER['REQUEST_URI'], ".php");
     $current_file_name = '';
@@ -38,15 +42,37 @@ if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
         $current_file_name = $_GET['page'];
     }
 
-    selectMenuItem($current_file_name);    
+    selectMenuItem($current_file_name);
+    
     if ($current_file_name == 'index') {
         include_once 'templates/home.phtml';
     } 
+    // Login page
+    else if ($current_file_name == 'login') {
+        if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
+            include_once 'login.php';
+        } else {
+            if($_SESSION ['user_role'] == 1) {                
+                $app->redirect('index.php?page=dashboard');
+            } else {
+                include_once 'templates/home.phtml';
+            }
+        }
+    } 
+    else if($current_file_name == 'dashboard') {
+        if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {            
+            $app->redirect('index.php?page=login');
+        } else {             
+            include_once 'templates/admin-dashboard.phtml';
+        }
+    }
     // Categories List
     else if ($current_file_name == 'categories') {
         include_once 'controller/category-controller.php';
+        include_once 'controller/paginate-controller.php';
+        $paginator = new PaginateController();
         $category = new CategoryController();
-        $categories = $category->get();        
+        $categories = $category->get();
         include_once 'templates/categories.phtml';
     } 
     // New category
@@ -73,15 +99,18 @@ if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
     else if ($current_file_name == 'products') {
         //include_once 'products.php';
         include_once 'controller/product-controller.php';
+        include_once 'controller/paginate-controller.php';
+        $paginator = new PaginateController();
         $product = new ProductController();
-        $products = $product->get();
+        $filters = (!empty($_GET)) ? $_GET : array();
+        $products = $product->get($filters);
         include_once 'templates/products.phtml';
     } 
     // New product
     else if($current_file_name == 'new-product') {
         include_once 'controller/category-controller.php';
         $category = new CategoryController();
-        $categories = $category->database->resultArray($category->get());
+        $categories = $category->get();        
         include_once 'templates/new-product.phtml';
     }
     // Edit product
@@ -93,7 +122,7 @@ if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
         
         include_once 'controller/category-controller.php';
         $category = new CategoryController();
-        $categories = $category->database->resultArray($category->get());
+        $categories = $category->get();
         include_once 'templates/new-product.phtml';
     }
     // Delete product
@@ -113,6 +142,6 @@ if (isset($_SESSION ['user_id']) && ($_SESSION ['user_id'] == '' )) {
         include_once 'customers.php';
     }
     
-}
+//}
 include_once 'layout/footer.php';
 ?>

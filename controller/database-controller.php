@@ -67,7 +67,8 @@ class DataBaseController {
         $query = "SELECT * FROM " . self::TABLE_PREFIX . "categories";
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
-            return $result;
+            //return $result;
+            return $this->resultArray($result);
         } else {
             return array();
         }
@@ -149,6 +150,20 @@ class DataBaseController {
         }
     }
 
+    /**
+     * Get the product by category Id
+     * @param int $catId
+     */
+    public function productGetByCategory($catId) {
+        $query = "SELECT * FROM " . self::TABLE_PREFIX . "products WHERE catId = $catId";        
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0) {
+            return $this->resultArray($result);
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * Insert product data
      * @param array $data

@@ -105,10 +105,10 @@
 					{
 					?>
 						<ul class="clearfix col-lg-12">
-									<li id="user-link" style="float:right;"><a href="./index.php?page=login">Sign In</a></li>
-									<li id="user-link" style="float:right;"><a href="./index.php?page=registration">Sign Up</a></li>
-
-								</ul>
+							<li><a href="./index.php">Home</a></li>
+							<li id="user-link" style="float:right;"><a href="./index.php?page=login">Sign In</a></li>
+							<li id="user-link" style="float:right;"><a href="./index.php?page=registration">Sign Up</a></li>
+						</ul>
 					<?php
 					}
 					?>

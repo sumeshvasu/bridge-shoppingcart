@@ -19,7 +19,7 @@ function bridge_trim_deep($value)
 	}
 	else
 	{
-		$value = trim($value);
+		$value = trim(removeScript( $value ) );
 	}
 
 	return $value;

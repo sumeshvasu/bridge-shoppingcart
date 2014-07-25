@@ -1,3 +1,9 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
+
+?>
 <script>
 $( function() {
 	$( "#registration-error-banner" ).hide();
@@ -14,8 +20,19 @@ $( function() {
 			setTimeout(function() { $("#registration-error-banner").hide('blind', {}, 500); $("#registration-banner").show('blind', {}, 500)}, 2500);
 		<?php
     	}
-    	else
+    	if( isset($_SESSION ['user_registration_username_error']) && $_SESSION ['user_registration_username_error'] == 1 )
     	{
+		?>
+		$("#registration-banner").hide();
+		$( "#registration-error-banner" ).show();
+		$( "#registration-error-banner" ).html('<div class="col-lg-4"></div><div class="col-lg-4"><div class="alert alert-danger alert-dismissable"><h3><b>Registration :</b> Username exist !!!</h3></div></div><div class="col-lg-4"></div>');
+		$( "#registration-error-banner" ).effect( "shake" );
+		setTimeout(function() { $("#registration-error-banner").hide('blind', {}, 500); $("#registration-banner").show('blind', {}, 500)}, 2500);
+		<?php
+		}
+
+		if( isset($_SESSION ['user_registration_username_error']) && $_SESSION ['user_registration_username_error'] == '' &&  !isset($_SESSION ['user_registration_password_error']) && $_SESSION ['user_registration_password_error'] == '' )
+		{
 		?>
 			$("#registration-banner").hide();
 			$( "#registration-error-banner" ).show();

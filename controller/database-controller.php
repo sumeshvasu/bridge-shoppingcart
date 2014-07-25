@@ -316,15 +316,15 @@ class DataBaseController {
     function userRegistration( $first_name, $last_name, $email, $username, $password )
     {
 
-    	$checking_query	= "SELECT *
-						   " . $this->db_table_prefix. "users
-					       WHERE username='".$username."' AND type='2'
+    	$checking_query= "SELECT *
+						   FROM " . $this->db_table_prefix. "users
+					       WHERE username='".$username."' AND roleId='2'
   		     			   LIMIT 0,1";
 
     	if( $this->singlevalue( $checking_query ) == 0 ) {
 	    	$query 	= "INSERT INTO
 	            	  " . $this->db_table_prefix. "users(username, password, firstName, lastName, email, roleId)
-	            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". email."', 2 )";
+	            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". $email."', 2 )";
 
 	    	$this->commonDatabaseAction($query);
 	    	return true;

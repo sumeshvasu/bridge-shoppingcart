@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 /**
  * @project Bridge shoppingcart
  * Manage submitted form values( POST )
@@ -21,15 +23,19 @@ if ( isset( $_REQUEST['action'] ) )
 
 				$_SESSION ['user_registration_error'] 			= '';
 				$_SESSION ['user_registration_password_error'] 	= '';
+				$_SESSION ['user_registration_username_error'] 	= '';
 
 				if ( $result )
 				{
-					/* Redirect to categories page */
+					/* Redirect to login page */
 					$user->redirect("index.php?page=login");
 				}
 				else
 				{
+
 					$_SESSION ['user_registration_username_error'] 	= 1;
+					/* Redirect to registration page */
+					$user->redirect("index.php?page=registration");
 				}
 
 			}

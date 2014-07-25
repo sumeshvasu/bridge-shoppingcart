@@ -1,10 +1,32 @@
 <?php
+session_start();
 /**
  * @project Bridge shoppingcart
  * Manage submitted form values( POST )
  */
 if ( isset( $_REQUEST['action'] ) )
 {
+	/* User Registartion */
+	if ( $_REQUEST['action'] == 'REGISTRATION' )
+	{
+		if ( $_POST['firstname'] &&  $_POST['email'] &&  $_POST['username'] && $_POST['password'] &&  $_POST['confirmpassword'] )
+		{
+			include_once 'common/common-function.php';
+			include_once 'controller/user-controller.php.php';
+			$user 		= new UserController();
+
+			$user->userRegistration( bridge_trim_deep ( $_POST ) );
+
+
+			/* Redirect to categories page */
+			$category->redirect("index.php?page=categories");
+		}
+		else
+		{
+			$_SESSION ['user_registration_error'] = 1;
+		}
+	}
+
     /* Category insert */
     if ( $_REQUEST['action'] == 'CATEGORY' )
     {

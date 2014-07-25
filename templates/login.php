@@ -1,3 +1,20 @@
+<script>
+$( function() {
+	$( "#login-error-banner" ).hide();
+	<?php
+    if( isset($_SESSION ['user_login_error']) && $_SESSION ['user_login_error'] == 1 )
+    {
+	?>
+		$("#login-banner").hide();
+		$( "#login-error-banner" ).show();
+		$( "#login-error-banner" ).effect( "shake" );
+		setTimeout(function() { $("#login-error-banner").hide('blind', {}, 500); $("#login-banner").show('blind', {}, 500)}, 2500);
+	<?php
+	}
+	?>
+});
+</script>
+
 <div class="row" id="login-banner">
 	<div class="col-lg-4"></div>
 	<div class="col-lg-4">
@@ -32,10 +49,8 @@
 				<div class="panel-heading">
 					<div class="row">
 
-						<div class="col-xs-12" id="usernameError">
-							<div class="form-group">
-								<label id="usernameErrorMessage"></label>
-							</div>
+						<div class="col-xs-12">
+							<div class="form-group"></div>
 						</div>
 						<div class="col-xs-4">
 							<div class="form-group">
@@ -44,7 +59,7 @@
 						</div>
 						<div class="col-xs-7">
 							<div class="form-group">
-								<input class="form-control" placeholder="Enter Username" name="username" value="<?php if( isset( $_POST['username']) && $_POST['username'] != '' ){ echo $_POST['username']; }?>">
+								<input autofocus required="required" class="form-control" placeholder="Enter Username" name="username" value="<?php if( isset( $_POST['username']) && $_POST['username'] != '' ){ echo $_POST['username']; }?>">
 							</div>
 						</div>
 
@@ -55,10 +70,10 @@
 						</div>
 						<div class="col-xs-7">
 							<div class="form-group">
-								<input type="password" class="form-control" placeholder="Enter Password" name="password" value="<?php if( isset( $_POST['password']) && $_POST['password'] != '' ){ echo $_POST['password']; }?>">
+								<input required="required" type="password" class="form-control" placeholder="Enter Password" name="password" value="<?php if( isset( $_POST['password']) && $_POST['password'] != '' ){ echo $_POST['password']; }?>">
 							</div>
 						</div>
-						<div class="col-xs-12" id="usernameError">
+						<div class="col-xs-12">
 							<div class="form-group"></div>
 						</div>
 

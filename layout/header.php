@@ -30,7 +30,7 @@
 <body>
 	<script>
 		$( function() {
-			$( "#login-error-banner" ).hide();
+
 			var pull 		= $('#pull');
 				menu 		= $('nav ul');
 				menuHeight	= menu.height();
@@ -46,17 +46,7 @@
         			menu.removeAttr('style');
         		}
     		});
-    		<?php
-    		if( isset($_SESSION ['user_login_error']) && $_SESSION ['user_login_error'] == 1 )
-    		{
-			?>
-				$("#login-banner").hide();
-				$( "#login-error-banner" ).show();
-				$( "#login-error-banner" ).effect( "shake" );
-				setTimeout(function() { $("#login-error-banner").hide('blind', {}, 500); $("#login-banner").show('blind', {}, 500)     }, 2500);
-			<?php
-			}
-			?>
+
 		});
 
 	</script>

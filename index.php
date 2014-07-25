@@ -17,19 +17,26 @@ include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
 
 $user 	= new UserController ();
-$app 	= new AppController ();
+$application 	= new AppController ();
 
 if ( (isset ( $_POST ) ) && (isset ( $_POST ['btnLoginSubmit'] ) ) )
 {
 	$user->userLogin ( bridge_trim_deep ( $_POST ) );
 
-	if (isset ( $_SESSION ['user_id'] ) && $_SESSION ['user_role'] == 1 )
+	if (isset ( $_SESSION ['user_id'] ) && ( isset( $_SESSION ['user_role'] ) && $_SESSION ['user_role'] == 1 ) )
 	{
-		$app->redirect ( 'index.php?page=dashboard' );
+		$application->redirect ( 'index.php?page=dashboard' );
 	}
 	else
 	{
-		$app->redirect ( 'index.php?page=home' );
+		if ( (isset ( $_POST ['btnLoginSubmit'] ) ) )
+		{
+			$application->redirect ( 'index.php?page=login' );
+		}
+		else
+		{
+			$application->redirect ( 'index.php?page=home' );
+		}
 	}
 }
 
@@ -72,7 +79,7 @@ else if ( $current_file_name == 'login' )
 	{
 		if ( $_SESSION ['user_role'] == 1 )
 		{
-			$app->redirect ( 'index.php?page=dashboard' );
+			$application->redirect ( 'index.php?page=dashboard' );
 		}
 		else
 		{
@@ -91,7 +98,7 @@ else if ($current_file_name == 'registration')
 	{
 		if ( $_SESSION ['user_role'] == 1 )
 		{
-			$app->redirect ( 'index.php?page=dashboard' );
+			$application->redirect ( 'index.php?page=dashboard' );
 		}
 		else
 		{
@@ -104,7 +111,7 @@ else if ( $current_file_name == 'dashboard' )
 {
 	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
 	{
-		$app->redirect ( 'index.php?page=login' );
+		$application->redirect ( 'index.php?page=login' );
 	}
 	else
 	{

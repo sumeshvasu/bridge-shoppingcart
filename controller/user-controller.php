@@ -40,4 +40,9 @@ class UserController extends AppController
         }
     }
 
+    function userRegistration( $post )
+    {
+
+    }
+
 }

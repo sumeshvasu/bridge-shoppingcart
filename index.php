@@ -68,8 +68,13 @@ selectMenuItem ( $current_file_name );
 if ( $current_file_name == 'index' )
 {
         include_once 'controller/product-controller.php';
+        // Get products
         $product = new ProductController();
         $products = $product->get();
+        // Get categories
+        include_once 'controller/category-controller.php';
+        $category = new CategoryController();
+        $categories = $category->get();
 	include_once 'templates/home.php';
 }
 // Login page

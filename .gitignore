@@ -1,6 +1,6 @@
 .settings
-
 .buildpath
-nbproject
+/nbproject
 .project
 /uploads
+config.php

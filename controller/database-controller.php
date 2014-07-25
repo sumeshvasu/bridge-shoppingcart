@@ -6,17 +6,30 @@
  */
 class DataBaseController {
 
-    const DB_SERVER 	= "localhost";
+    /*const DB_SERVER 	= "localhost";
     const DB_USER 	= "root";
     const DB_PASSWORD 	= "";
     const DB 		= "bridge-store";
-    const TABLE_PREFIX 	= 'bs_';
+    const TABLE_PREFIX 	= 'bs_';*/
+    
+    protected $db_host;
+    protected $db_user;
+    protected $db_pass;
+    protected $db_name;
+    protected $db_table_prefix;
 
     /**
      * Constructor
      */
     function __construct()
     {
+        $config = getDbConfig();
+        $this->db_host = $config['host'];
+        $this->db_user = $config['user'];
+        $this->db_pass = $config['password'];
+        $this->db_name = $config['name'];
+        $this->db_table_prefix = $config['table_prefix'];
+        
         $this->dbConnect();
     }
 
@@ -24,13 +37,13 @@ class DataBaseController {
      * Create the DB conenction
      */
     function dbConnect()
-    {
-        $link = mysql_connect(self::DB_SERVER, self::DB_USER, self::DB_PASSWORD);
+    {        
+        $link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
 
         if (!$link) {
             echo 'DataBase Connection Error!!!';
         } else {
-            mysql_select_db(self::DB);
+            mysql_select_db($this->db_name);
         }
     }
 
@@ -42,7 +55,7 @@ class DataBaseController {
     function userLogin($username, $password)
     {
 
-        $pre = self::TABLE_PREFIX;
+        $pre = $this->db_table_prefix;
         $query = "SELECT *
         		  FROM " . $pre . "users u
         		  JOIN " . $pre . "roles r ON u.roleId = r.id
@@ -76,7 +89,7 @@ class DataBaseController {
     public function categoryGetAll()
     {
         $query 	= "SELECT *
-                   FROM " . self::TABLE_PREFIX . "categories";
+                   FROM " . $this->db_table_prefix . "categories";
 
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
@@ -96,12 +109,12 @@ class DataBaseController {
     {
         if (isset($data['id'])) {
             $query 	= "UPDATE
-            		 " . self::TABLE_PREFIX . "categories
+            		 " . $this->db_table_prefix . "categories
             		 SET name = '" . $data['name'] . "', status = " . $data['status'] . "
             		 WHERE id = " . $data['id'];
         } else {
             $query 	= "INSERT INTO
-            		 " . self::TABLE_PREFIX . "categories(id, name, status)
+            		 " . $this->db_table_prefix . "categories(id, name, status)
             		 VALUES(null, '" . $data['name'] . "'," . $data['status'] . ")";
         }
         $result 	= $this->commonDatabaseAction($query);
@@ -120,7 +133,7 @@ class DataBaseController {
     public function categoryById($id)
     {
         $query 	= "SELECT *
-                   FROM " . self::TABLE_PREFIX . "categories
+                   FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
@@ -137,7 +150,7 @@ class DataBaseController {
     public function categoryDelete($id)
     {
         $query 	= "DELETE
-        	   FROM " . self::TABLE_PREFIX . "categories
+        	   FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
         if (mysql_affected_rows($result) > 0) {
@@ -154,7 +167,7 @@ class DataBaseController {
     public function productGetAll()
     {
         $query 	= "SELECT *
-                   FROM " . self::TABLE_PREFIX . "products";
+                   FROM " . $this->db_table_prefix . "products";
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
             return $this->resultArray($result);
@@ -170,7 +183,7 @@ class DataBaseController {
     public function productGetById($id)
     {
         $query 	= "SELECT *
-        	   FROM " . self::TABLE_PREFIX . "products
+        	   FROM " . $this->db_table_prefix . "products
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
@@ -187,7 +200,7 @@ class DataBaseController {
     public function productGetByCategory($catId)
     {
         $query 	= "SELECT *
-        	   FROM " . self::TABLE_PREFIX . "products
+        	   FROM " . $this->db_table_prefix . "products
         	   WHERE catId = $catId";
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
@@ -211,7 +224,7 @@ class DataBaseController {
             }
             $setValues = rtrim($setValues, ',') . ' ';
             $query = "UPDATE
-                     " . self::TABLE_PREFIX . "products
+                     " . $this->db_table_prefix . "products
             	     SET " . $setValues . "
             	     WHERE id = " . $data['id'];
         } else {
@@ -221,7 +234,7 @@ class DataBaseController {
             }
             $insertValues = rtrim($insertValues, ',');
             $query = "INSERT INTO
-            		 " . self::TABLE_PREFIX . "products
+            		 " . $this->db_table_prefix . "products
             		 VALUES(" . $insertValues. ")";
         }
 
@@ -241,7 +254,7 @@ class DataBaseController {
     public function productDelete($id)
     {
         $query 	= "DELETE
-        		  FROM " . self::TABLE_PREFIX . "products
+        		  FROM " . $this->db_table_prefix . "products
         		  WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
         if (mysql_affected_rows($result) > 0) {

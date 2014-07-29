@@ -32,6 +32,7 @@ class UploadController {
     public $temp_prefix 			= "temp_file_";
     public $client_name 			= '';
     protected $_file_name_override 	= '';
+    public $filename_prefix             = '';
 
     /**
      * Constructor
@@ -84,7 +85,8 @@ class UploadController {
             'remove_spaces' => TRUE,
             'xss_clean' => FALSE,
             'temp_prefix' => "temp_file_",
-            'client_name' => ''
+            'client_name' => '',
+            'filename_prefix' => ''
         );
 
 
@@ -166,7 +168,7 @@ class UploadController {
         $this->_file_mime_type($_FILES[$field]);
         $this->file_type = preg_replace("/^(.+?);.*$/", "\\1", $this->file_type);
         $this->file_type = strtolower(trim(stripslashes($this->file_type), '"'));
-        $this->file_name = $this->_prep_filename($_FILES[$field]['name']);
+        $this->file_name = $this->filename_prefix . $this->_prep_filename($_FILES[$field]['name']);
         $this->file_ext = $this->get_extension($this->file_name);
         $this->client_name = $this->file_name;
 

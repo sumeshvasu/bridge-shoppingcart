@@ -15,9 +15,8 @@
             <div class="col-lg-6">
                 <form role="form" id="new-product-form" action="post-handler.php?action=PRODUCT" method="POST" enctype="multipart/form-data">
                     <?php
-                    if ( isset( $product_info ) )
-					{
-					?>
+                    if (isset($product_info)) {
+                        ?>
                         <div class="form-group">
                             <label>Product Name</label>
                             <input type="hidden" name="product-id" value="<?php echo $product_info['id']; ?>" />
@@ -35,44 +34,44 @@
                             <label>Category</label>
                             <select class="form-control" name="product-cat">
                                 <?php
-                                foreach ( $categories as $cat )
-								{
-									if ( $product_info['catId'] == $cat['id'] )
-									{
-									?>
+                                foreach ($categories as $cat) {
+                                    if ($product_info['catId'] == $cat['id']) {
+                                        ?>
                                         <option value="<?php echo $cat['id']; ?>" selected="selected"><?php echo $cat['name']; ?></option>
-                                    <?php
-									}
-									else
-									{
-									?>
+                                        <?php
+                                    } else {
+                                        ?>
                                         <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-                                    <?php
-									}
-								}
-								?>
+                                        <?php
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Download Link Validity</label>
                             <input class="form-control" id="product-validity" name="product-validity" placeholder="" value="<?php echo $product_info['validity']; ?>"/>
                         </div>
-                        <div class="form-group">
+<!--                        <div class="form-group">
                             <label>Download Link</label>
                             <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" value="<?php echo $product_info['downloadLink']; ?>"/>
+                        </div>-->
+                        <div class="form-group">                            
+                            <label>Upload Product</label>
+                            <input type="file" id="product-upload" name="product-upload" placeholder="Upload product" />
+                            <label>Current Product: </label><span><a href="<?php echo 'uploads/' . $product_info['id'] .'_'. $product_info['downloadLink']; ?>"><?php echo $product_info['downloadLink'];?></a></span>
+                            <input type="hidden" name="hid-product-upload" value="<?php echo $product_info['downloadLink']; ?>">
                         </div>
                         <div class="form-group">
-                            <img src="uploads/<?php echo $product_info['imagePath']; ?>" width="100" height="100" />
+                            <img src="uploads/<?php echo $product_info['id'] .'_'. $product_info['imagePath']; ?>" width="100" height="100" />
                             <input type="hidden" name="hid-product-image" value="<?php echo $product_info['imagePath']; ?>">
                             <label>Image</label>
                             <input type="file" id="product-image" name="product-image">
                         </div>
 
-                    <?php
-					}
-					else
-					{
-					?>
+    <?php
+} else {
+    ?>
                         <div class="form-group">
                             <label>Product Name</label>
                             <input class="form-control" id="product-name" name="product-name" placeholder="Enter product name" />
@@ -88,78 +87,75 @@
                         <div class="form-group">
                             <label>Category</label>
                             <select class="form-control" name="product-cat">
-                                <?php
-                                foreach ( $categories as $cat )
-								{
-								?>
+    <?php
+    foreach ($categories as $cat) {
+        ?>
                                     <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-                                <?php
-								}
-								?>
+        <?php
+    }
+    ?>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Download Link Validity</label>
                             <input class="form-control" id="product-validity" name="product-validity" placeholder="" />
                         </div>
-                        <div class="form-group">
+<!--                        <div class="form-group">
                             <label>Download Link</label>
                             <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" />
+                        </div>-->
+                        <div class="form-group">
+                            <label>Upload Product</label>
+                            <input type="file" id="product-upload" name="product-upload" placeholder="Upload product" />
                         </div>
                         <div class="form-group">
                             <label>Image</label>
                             <input type="file" id="product-image" name="product-image">
                         </div>
 
-                    <?php
-					}
-					?>
+    <?php
+}
+?>
                     <div class="form-group">
                         <label>Status</label>
-                        <?php
-                        if ( isset( $product_info ) )
-                        {
-                        ?>
+<?php
+if (isset($product_info)) {
+    ?>
 
-                            <?php
-                            if ( $product_info['status'] == 1 )
-							{
-							?>
+                        <?php
+                        if ($product_info['status'] == 1) {
+                            ?>
                                 <label class="radio-inline">
                                     <input name="product-status" id="product-status-enabled" value="1" type="radio" checked=""> Enabled
                                 </label>
                                 <label class="radio-inline">
                                     <input name="product-status" id="product-status-disabled" value="0" type="radio"> Disabled
                                 </label>
-                            <?php
-							}
-							else
-							{
-							?>
+                                <?php
+                            } else {
+                                ?>
                                 <label class="radio-inline">
                                     <input name="product-status" id="product-status-enabled" value="1" type="radio" > Enabled
                                 </label>
                                 <label class="radio-inline">
                                     <input name="product-status" id="product-status-disabled" value="0" type="radio" checked=""> Disabled
                                 </label>
-                            <?php
-							}
-							?>
+                                <?php
+                            }
+                            ?>
 
-                        <?php
-                        }
-                        else
-						{
-						?>
+                            <?php
+                        } else {
+                            ?>
                             <label class="radio-inline">
                                 <input name="product-status" id="product-status-enabled" value="1" type="radio" checked=""> Enabled
                             </label>
                             <label class="radio-inline">
                                 <input name="product-status" id="product-status-disabled" value="0" type="radio"> Disabled
                             </label>
-                        <?php
-						}
-						?>
+                            <?php
+                        }
+                        ?>
                     </div>
 
                     <button type="submit" class="btn btn-primary" id="new-product-submit">Submit</button>
@@ -201,9 +197,9 @@
     function validate(field, message, filter)
     {
         valid = false;
-        if(filter === 'required') {
+        if (filter === 'required') {
             valid = ($('#product-' + field).val() != '') ? true : false;
-        } else if(filter === 'numeric') {
+        } else if (filter === 'numeric') {
             valid = $.isNumeric($('#product-' + field).val());
         } else {
             valid = true;

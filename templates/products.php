@@ -3,16 +3,15 @@
  * @project Bridge shoppingcart
  * Admin product page template
  */
-$per_page 		= 4;
-$page_deatils 	= $paginator->setPagination($per_page, $products);
-$page 			= $page_deatils['page'];
-$show_page 		= $page_deatils['showPage'];
-$total_pages 	= $page_deatils['totalPages'];
-$start 			= $page_deatils['start'];
-$end 			= $page_deatils['end'];
+$per_page     = 4;
+$page_deatils = $paginator->setPagination($per_page, $products);
+$page         = $page_deatils['page'];
+$show_page    = $page_deatils['showPage'];
+$total_pages  = $page_deatils['totalPages'];
+$start        = $page_deatils['start'];
+$end          = $page_deatils['end'];
 
-$total_results 	= count( $products );
-
+$total_results = count($products);
 ?>
 <div class="row">
     <div class="col-lg-12">
@@ -29,7 +28,7 @@ $total_results 	= count( $products );
                 <?php
                 $reload = $_SERVER['PHP_SELF'] . "?page=products&amp;tpages=" . $total_pages;
                 if ($total_pages > 1)
-				{
+                {
                     echo $paginator->paginate($reload, $show_page, $total_pages);
                 }
                 ?>
@@ -38,8 +37,8 @@ $total_results 	= count( $products );
 
         <?php
         if ($products)
-		{
-		?>
+        {
+            ?>
             <div class="table-responsive" id="product-list">
                 <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
@@ -57,10 +56,10 @@ $total_results 	= count( $products );
                     <tbody>
                         <?php
                         for ($i = $start; $i < $end; $i++)
-						{
+                        {
 
                             if ($i == $total_results)
-							{
+                            {
                                 break;
                             }
                             $row = $products[$i];
@@ -70,20 +69,20 @@ $total_results 	= count( $products );
                                 <td><?php echo $row['description'] ?></td>
                                 <td><?php echo $row['price'] ?></td>
                                 <td><?php echo $row['validity'] ?></td>
-                                <td><img src="uploads/<?php echo $row['imagePath'] ?>" width="100" height="100"></td>
+                                <td><img src="uploads/<?php echo $row['id'] . '_' . $row['imagePath'] ?>" width="100" height="100"></td>
                                 <td><?php echo ($row['status'] == 1) ? 'Enabled' : 'Disabled'; ?></td>
                                 <td><a class="btn btn-success"  id="product-edit" href="index.php?page=edit-product&id=<?php echo $row['id']; ?>">Edit</a></td>
                                 <td><a class="btn btn-danger" id="product-delete" href="index.php?page=delete-product&id=<?php echo $row['id']; ?>">Delete</a></td>
                             </tr>
-					    <?php
-						}
-						?>
+                            <?php
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
-		<?php
-		}
-		?>
+            <?php
+        }
+        ?>
     </div>
 </div>
 <!-- Page Specific Plugins -->

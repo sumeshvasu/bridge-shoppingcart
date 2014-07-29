@@ -37,18 +37,26 @@
                                     <div class="panel-body">
                                         <div style="float:left">
                                             <img src="uploads/<?php echo $product['imagePath'];?>" width="100" height="100" />
-                                        </div>
-                                        <div style="float: right">
 
-                                            <div class="col-lg-100">
-                                                <div>
-                                                    <?php echo $product['description'];?>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div style="float:left">
+                                                <img src="uploads/<?php echo $product['imagePath']; ?>" width="100" height="100" />
+                                            </div>
+                                            <div style="float: right">
+
+                                                <div class="col-lg-100">
+                                                    <div>
+                                                        <?php echo $product['description']; ?>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <p><?php echo $product['price'];?></p>
                                             <a href="./index.php?page=buyitnow&productId=<?php echo $product['id'];?>"><button type="button" class="btn btn-primary">Buy It Now</button></a>
                                             <a href="./index.php?page=addtocart&productId=<?php echo $product['id'];?>"><button type="button" class="btn btn-primary">Add to cart</button></a>
 
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -57,6 +65,7 @@
 							}
 						}
 						?>
+
                     </div>
                 </div>
             </div>

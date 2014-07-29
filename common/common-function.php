@@ -74,6 +74,20 @@ function selectMenuItem( $request_page )
 				}
 			});
 		}
+		else if( selectedPage == 'login'){
+			$( document ).find('a').each(function() {
+				if($(this).text() == 'Sign In'){
+					 $(this).css('color','#8a6d3b');
+				}
+			});
+		}
+		else if( selectedPage == 'registration'){
+			$( document ).find('a').each(function() {
+				if($(this).text() == 'Sign Up'){
+					 $(this).css('color','#8a6d3b');
+				}
+			});
+		}
 	</script>
 	<?php
 }

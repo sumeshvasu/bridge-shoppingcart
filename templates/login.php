@@ -89,6 +89,7 @@ $( function() {
 					</div>
 				</div>
 			</div>
+			<input type="hidden" name="hiddenRedirect" value="<?php if( isset( $_GET['page'] ) && $_GET['page'] != '' ) { echo $_GET['page'];}?>" >
 		</form>
 	</div>
 </div>

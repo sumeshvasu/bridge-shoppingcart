@@ -23,22 +23,42 @@ $application 	= new AppController ();
 
 if ( (isset ( $_POST ) ) && (isset ( $_POST ['btnLoginSubmit'] ) ) )
 {
+
 	$user->userLogin ( bridge_trim_deep ( $_POST ) );
 
 	if (isset ( $_SESSION ['user_id'] ) && ( isset( $_SESSION ['user_role'] ) && $_SESSION ['user_role'] == 1 ) )
 	{
-		$application->redirect ( 'index.php?page=dashboard' );
-	}
-	else
-	{
-		if ( (isset ( $_POST ['btnLoginSubmit'] ) ) )
+		if ( isset( $_POST['hiddenRedirect'] ) && $_POST['hiddenRedirect'] != '' )
 		{
-			$application->redirect ( 'index.php?page=login' );
+			if ( $_POST['hiddenRedirect'] == 'buyitnow' )
+			{
+				$application->redirect ( 'templates/buy-it-now.php?productId='.$_SESSION ['buy_it_now_product_id']);
+			}
+			else if ( $_POST['hiddenRedirect'] == 'addtocart' )
+			{
+				include_once 'templates/cart.php?productId='.$_SESSION ['add_to_cart_product_id'];
+			}
 		}
 		else
 		{
-			$application->redirect ( 'index.php?page=home' );
+			$application->redirect ( 'index.php?page=dashboard' );
 		}
+	}
+	else
+	{
+
+		if ( isset( $_POST['hiddenRedirect'] ) && $_POST['hiddenRedirect'] != '' )
+		{
+			if ( $_POST['hiddenRedirect'] == 'buyitnow' )
+			{
+				$application->redirect ( 'index.php?page=buyitnow&productId='.$_SESSION ['buy_it_now_product_id'] );
+			}
+			else if ( $_POST['hiddenRedirect'] == 'addtocart' )
+			{
+				$application->redirect ( 'index.php?page=addtocart&productId='.$_SESSION ['add_to_cart_product_id'] );
+			}
+		}
+
 	}
 }
 
@@ -71,7 +91,7 @@ if ( $current_file_name == 'index' )
         include_once 'controller/product-controller.php';
         $product = new ProductController();
         $products = $product->get();
-	include_once 'templates/home.php';
+		include_once 'templates/home.php';
 }
 // Login page
 else if ( $current_file_name == 'login' )
@@ -109,6 +129,46 @@ else if ($current_file_name == 'registration')
 		{
 			include_once 'templates/home.php';
 		}
+	}
+}
+// Buy It Now
+else if ($current_file_name == 'buyitnow')
+{
+	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
+	{
+		if ( isset( $_GET['productId'] ) && $_GET['page'] == 'buyitnow' )
+		{
+			$_SESSION ['buy_it_now_product_id'] = $_GET['productId'] ;
+			include_once 'templates/login.php';
+		}
+		else
+		{
+			include_once 'templates/home.php';
+		}
+	}
+	else
+	{
+		include_once 'templates/buy-it-now.php';
+	}
+}
+// Add To Cart
+else if ($current_file_name == 'addtocart')
+{
+	if ( isset ( $_SESSION ['user_id'] ) && ( $_SESSION ['user_id'] == '' ) )
+	{
+		if ( isset( $_GET['productId'] ) && $_GET['page'] == 'addtocart' )
+		{
+			$_SESSION ['add_to_cart_product_id'] = $_GET['productId'] ;
+			include_once 'templates/login.php';
+		}
+		else
+		{
+			include_once 'templates/home.php';
+		}
+	}
+	else
+	{
+		include_once 'templates/buy-it-now.php';
 	}
 }
 // Dashboard

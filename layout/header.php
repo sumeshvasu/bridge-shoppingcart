@@ -66,10 +66,10 @@
 					<div class="panel-footer announcement-bottom">
 						<div class="row ">
 							<nav class="clearfix">
-					<?php
-					if ( isset( $_SESSION ['user_id'] ) && ($_SESSION ['user_id'] != '' ) )
-					{
-					?>
+							<?php
+							if ( isset( $_SESSION ['user_id'] ) && ($_SESSION ['user_id'] != '' ) )
+							{
+							?>
 								<ul class="clearfix col-lg-12">
 									<li><a href="./index.php">Home</a></li>
 									<?php
@@ -95,23 +95,32 @@
 									<li id="user-link" style="float:right;"><a href="./logout.php">Sign Out</a></li>
 									<li style="float:right;">
 										<?php
-											echo $_SESSION['user_first_name'].' '.$_SESSION['user_last_name']
+											echo ucwords( $_SESSION['user_first_name'].' '.$_SESSION['user_last_name'] );
 										?>
 									</li>
 								</ul>
-					<?php
-					}
-					else
-					{
-					?>
-						<ul class="clearfix col-lg-12">
-							<li><a href="./index.php">Home</a></li>
-							<li id="user-link" style="float:right;"><a href="./index.php?page=login">Sign In</a></li>
-							<li id="user-link" style="float:right;"><a href="./index.php?page=registration">Sign Up</a></li>
-						</ul>
-					<?php
-					}
-					?>
+							<?php
+							}
+							else
+							{
+							?>
+								<ul class="clearfix col-lg-12">
+								<?php 
+								if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'login' || $_GET['page'] == 'registration' ) )
+								{
+									$current_file_name = $_GET ['page'];
+									selectMenuItem ( $current_file_name );
+								?>
+									<li><a href="./index.php">Home</a></li>
+								<?php 
+								}
+								?>
+									<li id="user-link" style="float:right;"><a href="./index.php?page=login">Sign In</a></li>
+									<li id="user-link" style="float:right;"><a href="./index.php?page=registration">Sign Up</a></li>
+								</ul>
+							<?php
+							}
+							?>
 
 								<span id="pull">&nbsp;</span>
 							</nav>

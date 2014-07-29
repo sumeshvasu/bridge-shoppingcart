@@ -24,29 +24,41 @@ if ( isset( $_REQUEST['action'] ) )
 				$_SESSION ['user_registration_error'] 			= '';
 				$_SESSION ['user_registration_password_error'] 	= '';
 				$_SESSION ['user_registration_username_error'] 	= '';
+				$_SESSION ['user_registration_post']			= '';
 
 				if ( $result )
 				{
-					/* Redirect to login page */
+					/* 
+					 * Registration success
+					 * Redirect to login page */
 					$user->redirect("index.php?page=login");
 				}
 				else
 				{
 
 					$_SESSION ['user_registration_username_error'] 	= 1;
-					/* Redirect to registration page */
+					$_SESSION ['user_registration_post'] 			= $_POST;
+					/* 
+					 * Registration error (Username already exist)
+					 * Redirect to registration page */
 					$user->redirect("index.php?page=registration");
 				}
 
 			}
 			else
 			{
+				/* 
+				 * Registartion error (Password and Confirmpassword are not matched)
+				 *   */
 				$_SESSION ['user_registration_error'] = 1;
 				$_SESSION ['user_registration_password_error'] = 1;
 			}
 		}
 		else
 		{
+			/*
+			 * Registartion error (Mandatory fields are empty)
+			*   */
 			$_SESSION ['user_registration_error'] = 1;
 		}
 	}

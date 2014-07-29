@@ -23,7 +23,12 @@
             <div class="panel-body">                
                 <div class="col-lg-12" style="display: inline">
                     <div class="row">
-                        <?php foreach ($products as $product) { ?>
+                        <?php 
+                        if ( isset( $products ) && count( $products ) > 0 )
+                        {
+                        	foreach ($products as $product) 
+							{ 						
+							?>
                             <div class="col-lg-4">
                                 <div class="panel panel-success">
                                     <div class="panel-heading">
@@ -41,13 +46,16 @@
                                                 </div>
                                             </div>
                                             <p><?php echo $product['price'];?></p>
-                                            <button type="button" class="btn btn-primary">Buy</button>
+                                            <a href="#"><button type="button" class="btn btn-primary">Buy</button></a>
 
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <?php } ?>
+                        <?php 
+							}
+						}
+						?>
                     </div>
                 </div>
             </div>

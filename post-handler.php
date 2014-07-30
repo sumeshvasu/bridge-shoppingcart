@@ -8,6 +8,7 @@ if (session_status() == PHP_SESSION_NONE)
  * @project Bridge shoppingcart
  * Manage submitted form values( POST )
  */
+
 if (isset($_REQUEST['action']))
 {
     /* User Registartion */

@@ -85,9 +85,11 @@ class DataBaseController {
      */
     public function categoryGetAll()
     {
-        $query 	= "SELECT *
-                   FROM " . $this->db_table_prefix . "categories";
-
+        $query 	= "SELECT c.*, count(p.id) as no_of_products
+                   FROM " . $this->db_table_prefix . "categories c "
+                . "LEFT JOIN " . $this->db_table_prefix . "products p "
+                . "ON c.id = p.catId group by c.id";        
+        
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0) {
             //return $result;
@@ -196,10 +198,13 @@ class DataBaseController {
      */
     public function productGetByCategory($catId)
     {
-        $query 	= "SELECT *
-        	   FROM " . $this->db_table_prefix . "products
-        	   WHERE catId = $catId";
-        $result = $this->commonDatabaseAction($query);
+        $query 	= "SELECT p.*, c.name as catName
+        	   FROM " . $this->db_table_prefix . "products p
+               JOIN " . $this->db_table_prefix . "categories c
+               ON p.catId = c.id 
+        	   WHERE p.catId = $catId";
+        
+        $result = $this->commonDatabaseAction($query);        
         if (mysql_num_rows($result) > 0) {
             return $this->resultArray($result);
         } else {

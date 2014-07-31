@@ -23,46 +23,40 @@ include_once 'common/common-function.php';
 $user        = new UserController ();
 $application = new AppController ();
 
+// Login Submit Handler
 if ((isset($_POST) ) && (isset($_POST ['btnLoginSubmit']) ))
 {
 
     $user->userLogin(bridge_trim_deep($_POST));
 
-    if (isset($_SESSION ['user_id']) && ( isset($_SESSION ['user_role']) && $_SESSION ['user_role'] == 1 ))
+    // If admin logged in
+    if ($application->is_logged_in(1, false))
     {
-        if (isset($_POST['hiddenRedirect']) && $_POST['hiddenRedirect'] != '')
-        {
-            if ($_POST['hiddenRedirect'] == 'buyitnow')
-            {
-                $application->redirect('templates/buy-it-now.php?productId=' . $_SESSION ['buy_it_now_product_id']);
-            }
-            else if ($_POST['hiddenRedirect'] == 'addtocart')
-            {
-                include_once 'templates/cart.php?productId=' . $_SESSION ['add_to_cart_product_id'];
-            }
-        }
-        else
-        {
-            $application->redirect('index.php?page=dashboard');
-        }
+        $application->redirect("index.php?page=index");
     }
     else
     {
-
-        if (isset($_POST['hiddenRedirect']) && $_POST['hiddenRedirect'] != '')
+        if (isset($_SESSION['page']) && $_SESSION['page'] != '')
         {
-            if ($_POST['hiddenRedirect'] == 'buyitnow')
+            $url_string = 'index.php?page=' . $_SESSION['page'];
+            if (isset($_SESSION['url_params']) && !empty($_SESSION['url_params']))
             {
-                $application->redirect('index.php?page=buyitnow&productId=' . $_SESSION ['buy_it_now_product_id']);
+                foreach ($_SESSION['url_params'] as $key => $value)
+                {
+                    $url_string .= '&' . $key . '=' . $value;
+                }
             }
-            else if ($_POST['hiddenRedirect'] == 'addtocart')
-            {
-                $application->redirect('index.php?page=addtocart&productId=' . $_SESSION ['add_to_cart_product_id']);
-            }
+
+            $application->redirect($url_string);
+        }
+        else
+        {
+            $application->redirect("index.php?page=index");
         }
     }
 }
 
+// Include the header layout
 include_once 'layout/header.php';
 
 
@@ -99,7 +93,7 @@ if ($current_file_name == 'index')
     include_once 'controller/category-controller.php';
     $category   = new CategoryController();
     $categories = $category->get();
-    $home_page = true;
+    $home_page  = true;
     include_once 'templates/home.php';
 }
 // Login page
@@ -143,41 +137,48 @@ else if ($current_file_name == 'registration')
 // Buy It Now
 else if ($current_file_name == 'buyitnow')
 {
-    if (isset($_SESSION ['user_id']) && ( $_SESSION ['user_id'] == '' ))
+    if (!$application->is_logged_in(0, false))
     {
         if (isset($_GET['productId']) && $_GET['page'] == 'buyitnow')
         {
             $_SESSION ['buy_it_now_product_id'] = $_GET['productId'];
-            include_once 'templates/login.php';
+            //include_once 'templates/login.php';
+            $_SESSION['page']                   = $_GET['page'];
+            $_SESSION['url_params']             = array('productId' => $_GET['productId']);
         }
-        else
-        {
-            include_once 'templates/home.php';
-        }
+        $application->redirect("index.php?page=login");
     }
     else
     {
+        // Get the selected product detail
+        $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
+        if ($product_id != '')
+        {
+            include_once 'controller/product-controller.php';
+            $product     = new ProductController();
+            $productInfo = $product->get(array('id' => $product_id));
+        }
+
         include_once 'templates/buy-it-now.php';
     }
 }
 // Add To Cart
 else if ($current_file_name == 'addtocart')
 {
-    if (isset($_SESSION ['user_id']) && ( $_SESSION ['user_id'] == '' ))
+    if (!$application->is_logged_in(0, false))
     {
         if (isset($_GET['productId']) && $_GET['page'] == 'addtocart')
         {
-            $_SESSION ['add_to_cart_product_id'] = $_GET['productId'];
-            include_once 'templates/login.php';
+            //$_SESSION ['buy_it_now_product_id'] = $_GET['productId'];
+            //include_once 'templates/login.php';
+            $_SESSION['page']       = $_GET['page'];
+            $_SESSION['url_params'] = array('productId' => $_GET['productId']);
         }
-        else
-        {
-            include_once 'templates/home.php';
-        }
+        $application->redirect("index.php?page=login");
     }
     else
     {
-        include_once 'templates/buy-it-now.php';
+        include_once 'templates/addtocart.php';
     }
 }
 // Dashboard
@@ -301,11 +302,11 @@ else if ($current_file_name == 'products-view')
 {
     include_once 'controller/product-controller.php';
     // Get products
-    $product  = new ProductController();
-    if(isset($_GET['catId']))
+    $product = new ProductController();
+    if (isset($_GET['catId']))
     {
         $products = $product->get(array('catId' => $_GET['catId']));
-        if(count($products) > 0)
+        if (count($products) > 0)
         {
             $cat_name = (isset($products[0]['catName'])) ? $products[0]['catName'] : '';
         }
@@ -323,7 +324,7 @@ else if ($current_file_name == 'products-view')
     include_once 'controller/category-controller.php';
     $category   = new CategoryController();
     $categories = $category->get();
-    
+
     include_once 'templates/home.php';
 }
 

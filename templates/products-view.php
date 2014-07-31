@@ -67,7 +67,7 @@
                                                             <?php echo $product['description']; ?>
                                                         </div>
                                                         <p><?php echo $product['price']; ?></p>
-                                                        <div class="row>"
+                                                        <div class="row">
                                                         <a href="./index.php?page=buyitnow&productId=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Buy It Now</button></a>
                                                         <a href="./index.php?page=addtocart&productId=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Add to cart</button></a>
                                                         </div>

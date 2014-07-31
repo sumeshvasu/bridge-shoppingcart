@@ -82,7 +82,7 @@ else
 selectMenuItem($current_file_name);
 
 if ($current_file_name == 'index')
-{
+{    
     include_once 'controller/product-controller.php';
     // Get products
 
@@ -93,8 +93,15 @@ if ($current_file_name == 'index')
     include_once 'controller/category-controller.php';
     $category   = new CategoryController();
     $categories = $category->get();
-    $home_page  = true;
-    include_once 'templates/home.php';
+    if($application->is_logged_in(1,false)){
+        $home_page  = true;
+        include_once 'templates/admin-dashboard.php';
+    }
+    else
+    {
+        $home_page  = true;
+        include_once 'templates/home.php';
+    }
 }
 // Login page
 else if ($current_file_name == 'login')
@@ -150,16 +157,23 @@ else if ($current_file_name == 'buyitnow')
     }
     else
     {
-        // Get the selected product detail
-        $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
-        if ($product_id != '')
+        if(!$application->is_admin()) 
         {
-            include_once 'controller/product-controller.php';
-            $product     = new ProductController();
-            $productInfo = $product->get(array('id' => $product_id));
-        }
+            // Get the selected product detail
+            $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
+            if ($product_id != '')
+            {
+                include_once 'controller/product-controller.php';
+                $product     = new ProductController();
+                $productInfo = $product->get(array('id' => $product_id));
+            }
 
-        include_once 'templates/buy-it-now.php';
+            include_once 'templates/buy-it-now.php';
+        }
+        else
+        {
+            $application->redirect('index.php?page=index');
+        }
     }
 }
 // Add To Cart

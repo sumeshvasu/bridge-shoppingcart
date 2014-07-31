@@ -18,7 +18,7 @@
                             <?php if (isset($productInfo) && !empty($productInfo))
                             {
                                 ?>
-                                <p><?php echo $profuctInfo['name']; ?></p>
+                                <p><?php echo $productInfo['name']; ?></p>
                                 <p><?php echo $productInfo['description']; ?></p>
                                 <p><?php echo $productInfo['price']; ?></p>
                                 <p><?php echo $productInfo['validity']; ?></p>

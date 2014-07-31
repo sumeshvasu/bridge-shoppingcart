@@ -15,7 +15,7 @@
                 <div class="row">
                     <div class="col-lg-8" style="display: inline">
                         <div class="row">
-                            <?php if (isset($productInfo))
+                            <?php if (isset($productInfo) && !empty($productInfo))
                             {
                                 ?>
                                 <p><?php echo $profuctInfo['name']; ?></p>

@@ -105,21 +105,14 @@ if ($current_file_name == 'index')
 }
 // Login page
 else if ($current_file_name == 'login')
-{
+{	
     if (isset($_SESSION ['user_id']) && ( $_SESSION ['user_id'] == '' ))
     {
-        include_once 'templates/login.php';
+        include_once 'templates/login.php';        
     }
     else
     {
-        if ($_SESSION ['user_role'] == 1)
-        {
-            $application->redirect('index.php?page=dashboard');
-        }
-        else
-        {
-            include_once 'templates/home.php';
-        }
+		$application->redirect("index.php");        
     }
 }
 // Registartion

@@ -3,7 +3,7 @@
  * Buyitnow view page
  * @param int
  */
-include_once("./paypal/config.php");
+include_once("./paypal/paypal-config.php");
 ?>
 
 <div class="row">

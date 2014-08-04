@@ -63,7 +63,7 @@ include_once("./paypal/paypal-config.php");
 	</div>
 </div>
 
-<form method="post" action="http://localhost/bridge-store/paypal/process.php">
+<form method="post" action="/paypal/process.php">
 	<input type="hidden" name="itemname" value="<?php echo $productInfo['name']; ?>" />
 	<input type="hidden" name="itemnumber" value="<?php echo $productInfo['id']; ?>" />
     <input type="hidden" name="itemdesc" value="<?php echo $productInfo['description']; ?>" />

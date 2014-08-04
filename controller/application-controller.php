@@ -28,7 +28,7 @@ class AppController
      * Redirect to the page
      * @param string $page
      */
-    function redirect($page)
+    function redirect($page = null)
     {
         $this->protocal_array    = explode('/', $_SERVER['SERVER_PROTOCOL']);
         $this->host              = $_SERVER['HTTP_HOST'] . '/';
@@ -36,7 +36,14 @@ class AppController
         $this->request_uri_array = explode('/', $_SERVER['REQUEST_URI']);
         $this->request_uri       = $this->request_uri_array[1] . '/';
 
-        header('location:' . $this->protocal . $this->host . $this->request_uri . $page);
+        if($page != null)
+        {
+            header('location:' . $this->protocal . $this->host . $this->request_uri . $page);
+        }
+        else
+        {
+            return $this->protocal . $this->host . $this->request_uri;
+        }
     }
 
     /**

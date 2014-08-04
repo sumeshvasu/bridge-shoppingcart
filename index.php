@@ -82,7 +82,7 @@ else
 selectMenuItem($current_file_name);
 
 if ($current_file_name == 'index')
-{    
+{
     include_once 'controller/product-controller.php';
     // Get products
 
@@ -105,14 +105,14 @@ if ($current_file_name == 'index')
 }
 // Login page
 else if ($current_file_name == 'login')
-{	
+{
     if (isset($_SESSION ['user_id']) && ( $_SESSION ['user_id'] == '' ))
     {
-        include_once 'templates/login.php';        
+        include_once 'templates/login.php';
     }
     else
     {
-		$application->redirect("index.php");        
+		$application->redirect("index.php");
     }
 }
 // Registartion
@@ -150,7 +150,7 @@ else if ($current_file_name == 'buyitnow')
     }
     else
     {
-        if(!$application->is_admin()) 
+        if(!$application->is_admin())
         {
             // Get the selected product detail
             $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
@@ -187,6 +187,30 @@ else if ($current_file_name == 'addtocart')
     {
         include_once 'templates/addtocart.php';
     }
+}
+/* Check out */
+else if ($current_file_name == 'checkout')
+{
+	if (!$application->is_logged_in(0, false))
+	{
+		if (isset($_GET['productId']) && $_GET['page'] == 'checkout')
+		{
+			$_SESSION['page']       = $_GET['page'];
+			$_SESSION['url_params'] = array('productId' => $_GET['productId']);
+		}
+		$application->redirect("index.php?page=login");
+	}
+	else
+	{
+		include_once 'controller/product-controller.php';
+		/* Fetch products details */
+
+		$product  		= new ProductController();
+		$productDetails = $product->get( array('id' => $_GET['productId']) );
+
+		include_once 'templates/checkout.php';
+		//$application->redirect("paypal/paypal.php?action=process");
+	}
 }
 // Dashboard
 else if ($current_file_name == 'dashboard')
@@ -335,6 +359,15 @@ else if ($current_file_name == 'products-view')
     include_once 'templates/home.php';
 }
 
+// Paypal success
+else if($current_file_name == 'paypal')
+{
+	if(isset($_GET['action']) && $_GET['action'] == 'success')
+	{
+		print_r($_POST);
+		foreach ($_POST as $key => $value) { echo "$key: $value<br>"; }
+	}
+}
 
 include_once 'layout/footer.php';
 ?>

@@ -73,7 +73,7 @@ if($_POST) //Post Data received from product list page.
 				'&PAYMENTREQUEST_0_AMT='.($GrandTotal).
 				'&PAYMENTREQUEST_0_CURRENCYCODE='.($PayPalCurrencyCode).
 				'&LOCALECODE=GB'. //PayPal pages to match the language on your website.
-				'&LOGOIMG=http://www.sanwebe.com/wp-content/themes/sanwebe/img/logo.png'. //site logo
+// 				'&LOGOIMG=http://www.sanwebe.com/wp-content/themes/sanwebe/img/logo.png'. //site logo
 				'&CARTBORDERCOLOR=FFFFFF'. //border color of cart
 				'&ALLOWNOTE=1';
 

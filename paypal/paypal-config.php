@@ -1,8 +1,12 @@
 <?php
 
-include_once '../controller/application-controller.php';
-$application = new AppController();
-$base_url = $application->redirect();
+$protocal_array    = explode('/', $_SERVER['SERVER_PROTOCOL']);
+$host              = $_SERVER['HTTP_HOST'] . '/';
+$protocal          = strtolower($protocal_array[0]) . '://';
+$request_uri_array = explode('/', $_SERVER['REQUEST_URI']);
+$request_uri       = $request_uri_array[1] . '/';
+
+$base_url = $protocal . $host . $request_uri;
 
 //start session in all pages
 if (session_status() == PHP_SESSION_NONE) { session_start(); } //PHP >= 5.4.0

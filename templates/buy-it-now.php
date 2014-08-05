@@ -63,11 +63,14 @@ include_once("./paypal/paypal-config.php");
 	</div>
 </div>
 
-<form method="post" action="/paypal/process.php">
-	<input type="hidden" name="itemname" value="<?php echo $productInfo['name']; ?>" />
-	<input type="hidden" name="itemnumber" value="<?php echo $productInfo['id']; ?>" />
+<?php
+    $base_url = $application->redirect();
+?>
+<form method="post" action="<?php echo $base_url;?>paypal/process.php">
+ <input type="hidden" name="itemname" value="<?php echo $productInfo['name']; ?>" />
+ <input type="hidden" name="itemnumber" value="<?php echo $productInfo['id']; ?>" />
     <input type="hidden" name="itemdesc" value="<?php echo $productInfo['description']; ?>" />
-	<input type="hidden" name="itemprice" value="<?php echo $productInfo['price']; ?>" /> Quantity : <select name="itemQty"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+ <input type="hidden" name="itemprice" value="<?php echo $productInfo['price']; ?>" /> Quantity : <select name="itemQty"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
     <input class="dw_button" type="submit" name="submitbutt" value="Buy (<?php echo $productInfo['price']; ?><?php echo $PayPalCurrencyCode; ?>)" />
 </form>
 

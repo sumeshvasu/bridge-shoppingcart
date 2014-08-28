@@ -4,11 +4,10 @@
  * @project Bridge shoppingcart
  * Manage database queries and methods
  */
-
-
 include_once 'config.php';
 
-class DataBaseController {
+class DataBaseController
+{
 
     protected $db_host;
     protected $db_user;
@@ -21,11 +20,11 @@ class DataBaseController {
      */
     function __construct()
     {
-        $config = getDbConfig();
-        $this->db_host = $config['host'];
-        $this->db_user = $config['user'];
-        $this->db_pass = $config['password'];
-        $this->db_name = $config['name'];
+        $config                = get_db_config();
+        $this->db_host         = $config['host'];
+        $this->db_user         = $config['user'];
+        $this->db_pass         = $config['password'];
+        $this->db_name         = $config['name'];
         $this->db_table_prefix = $config['table_prefix'];
 
         $this->dbConnect();
@@ -34,14 +33,34 @@ class DataBaseController {
     /**
      * Create the DB conenction
      */
-    function dbConnect()
+    function dbConnect($mode = 'mysql')
     {
-        $link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
+        if ($mode == 'mysql')
+        {
+            $link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
 
-        if (!$link) {
-            echo 'DataBase Connection Error!!!';
-        } else {
-            mysql_select_db($this->db_name);
+            if (!$link)
+            {
+                echo 'DataBase Connection Error!!!';
+            }
+            else
+            {
+                mysql_select_db($this->db_name);
+            }
+        }
+        else
+        {
+            $mysqli = new mysqli($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
+
+            //Output any connection error
+            if ($mysqli->connect_error)
+            {
+                echo 'DataBase Connection Error!!!';
+            }
+            else
+            {
+                return $mysqli;
+            }
         }
     }
 
@@ -54,28 +73,34 @@ class DataBaseController {
     {
 
         $query = "SELECT *
-        		  FROM " . $this->db_table_prefix. "users u
-        		  JOIN " . $this->db_table_prefix. "roles r ON u.roleId = r.id
+        		  FROM " . $this->db_table_prefix . "users u
+        		  JOIN " . $this->db_table_prefix . "roles r ON u.roleId = r.id
         		  WHERE username='" . $username . "' AND password='" . $password . "'
         		  LIMIT 0,1";
 
         $result = $this->commonDatabaseAction($query);
 
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
 
-            $user_details 					= mysql_fetch_assoc($result);
-            $_SESSION ['user_id'] 			= $user_details['id'];
-            $_SESSION ['user_first_name'] 	= $user_details['firstName'];
+            $user_details                 = mysql_fetch_assoc($result);
+            $_SESSION ['user_id']         = $user_details['id'];
+            $_SESSION ['user_first_name'] = $user_details['firstName'];
 
-            if ($result['lastName'] !== '') {
+            if ($result['lastName'] !== '')
+            {
                 $_SESSION ['user_last_name'] = $user_details['lastName'];
-            } else {
+            }
+            else
+            {
                 $_SESSION ['user_last_name'] = '';
             }
 
-            $_SESSION ['user_role'] 		= $user_details['roleId'];
-        } else {
-            $_SESSION ['user_login_error'] 	= 1;
+            $_SESSION ['user_role'] = $user_details['roleId'];
+        }
+        else
+        {
+            $_SESSION ['user_login_error'] = 1;
         }
     }
 
@@ -85,16 +110,19 @@ class DataBaseController {
      */
     public function categoryGetAll()
     {
-        $query 	= "SELECT c.*, count(p.id) as no_of_products
+        $query = "SELECT c.*, count(p.id) as no_of_products
                    FROM " . $this->db_table_prefix . "categories c "
                 . "LEFT JOIN " . $this->db_table_prefix . "products p "
                 . "ON c.id = p.catId group by c.id";
 
         $result = $this->commonDatabaseAction($query);
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
             //return $result;
             return $this->resultArray($result);
-        } else {
+        }
+        else
+        {
             return array();
         }
     }
@@ -106,21 +134,27 @@ class DataBaseController {
      */
     public function categoryInsert($data)
     {
-        if (isset($data['id'])) {
-            $query 	= "UPDATE
+        if (isset($data['id']))
+        {
+            $query = "UPDATE
             		 " . $this->db_table_prefix . "categories
             		 SET name = '" . $data['name'] . "', status = " . $data['status'] . "
             		 WHERE id = " . $data['id'];
-        } else {
-            $query 	= "INSERT INTO
+        }
+        else
+        {
+            $query = "INSERT INTO
             		 " . $this->db_table_prefix . "categories(id, name, status)
             		 VALUES(null, '" . $data['name'] . "'," . $data['status'] . ")";
         }
-        $result 	= $this->commonDatabaseAction($query);
+        $result = $this->commonDatabaseAction($query);
 
-        if (mysql_affected_rows($result) > 0) {
+        if (mysql_affected_rows($result) > 0)
+        {
             return TRUE;
-        } else {
+        }
+        else
+        {
             return FALSE;
         }
     }
@@ -131,13 +165,16 @@ class DataBaseController {
      */
     public function categoryById($id)
     {
-        $query 	= "SELECT *
+        $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
             return mysql_fetch_assoc($result);
-        } else {
+        }
+        else
+        {
             return array();
         }
     }
@@ -148,13 +185,16 @@ class DataBaseController {
      */
     public function categoryDelete($id)
     {
-        $query 	= "DELETE
+        $query  = "DELETE
         	   FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0) {
+        if (mysql_affected_rows($result) > 0)
+        {
             return TRUE;
-        } else {
+        }
+        else
+        {
             return FALSE;
         }
     }
@@ -165,12 +205,15 @@ class DataBaseController {
      */
     public function productGetAll()
     {
-        $query 	= "SELECT *
+        $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "products";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
             return $this->resultArray($result);
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -181,13 +224,16 @@ class DataBaseController {
      */
     public function productGetById($id)
     {
-        $query 	= "SELECT *
+        $query  = "SELECT *
         	       FROM " . $this->db_table_prefix . "products
         	       WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
             return mysql_fetch_assoc($result);
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -198,16 +244,19 @@ class DataBaseController {
      */
     public function productGetByCategory($catId)
     {
-        $query 	= "SELECT p.*, c.name as catName
+        $query = "SELECT p.*, c.name as catName
         	   FROM " . $this->db_table_prefix . "products p
                JOIN " . $this->db_table_prefix . "categories c
                ON p.catId = c.id
         	   WHERE p.catId = $catId";
 
         $result = $this->commonDatabaseAction($query);
-        if (mysql_num_rows($result) > 0) {
+        if (mysql_num_rows($result) > 0)
+        {
             return $this->resultArray($result);
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -218,32 +267,40 @@ class DataBaseController {
      */
     public function productInsert($data)
     {
-        if (isset($data['id'])) {
+        if (isset($data['id']))
+        {
             $setValues = '';
 
-            foreach($data as $key => $val) {
-                $setValues .= $key .' = ' . $val .',';
+            foreach ($data as $key => $val)
+            {
+                $setValues .= $key . ' = ' . $val . ',';
             }
             $setValues = rtrim($setValues, ',') . ' ';
-            $query = "UPDATE
+            $query     = "UPDATE
                      " . $this->db_table_prefix . "products
             	     SET " . $setValues . "
             	     WHERE id = " . $data['id'];
-        } else {
+        }
+        else
+        {
             $insertValues = 'null,';
-            foreach($data as $key => $val) {
-                $insertValues .= $val .',';
+            foreach ($data as $key => $val)
+            {
+                $insertValues .= $val . ',';
             }
             $insertValues = rtrim($insertValues, ',');
-            $query = "INSERT INTO
+            $query        = "INSERT INTO
             		 " . $this->db_table_prefix . "products
-            		 VALUES(" . $insertValues. ")";
+            		 VALUES(" . $insertValues . ")";
         }
 
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0) {
+        if (mysql_affected_rows($result) > 0)
+        {
             return TRUE;
-        } else {
+        }
+        else
+        {
             return FALSE;
         }
     }
@@ -255,13 +312,16 @@ class DataBaseController {
      */
     public function productDelete($id)
     {
-        $query 	= "DELETE
+        $query  = "DELETE
         		  FROM " . $this->db_table_prefix . "products
         		  WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0) {
+        if (mysql_affected_rows($result) > 0)
+        {
             return TRUE;
-        } else {
+        }
+        else
+        {
             return FALSE;
         }
     }
@@ -273,8 +333,9 @@ class DataBaseController {
      */
     public function resultArray($recordset)
     {
-        $result 	= array();
-        while ($row = mysql_fetch_assoc($recordset)) {
+        $result = array();
+        while ($row    = mysql_fetch_assoc($recordset))
+        {
             $result[] = $row; // Inside while loop
         }
         return $result;
@@ -289,10 +350,14 @@ class DataBaseController {
     {
         $result = mysql_query($query);
 
-        if (!mysql_error()) {
+        if (!mysql_error())
+        {
             return $result;
-        } else {
-            echo mysql_error();
+        }
+        else
+        {
+            //echo mysql_error();
+            return false;
         }
     }
 
@@ -301,43 +366,80 @@ class DataBaseController {
      * @parameter 1.query, 2.status
      *
      */
-    function singlevalue($sql,$stat=FALSE) {
-
-    	$result = $this->commonDatabaseAction($sql);
-
-    	if (mysql_num_rows($result)){
-    		$returnResult = mysql_result($result,0);
-    	}else {
-    		if ($stat==true) {
-    			$returnResult = "";
-    		}else {
-    			$returnResult = 0;
-    		}
-    	}
-    	return $returnResult;
-    }
-
-    /*  */
-    function userRegistration( $first_name, $last_name, $email, $username, $password )
+    function singlevalue($sql, $stat = FALSE)
     {
 
-    	$checking_query= "SELECT *
-						   FROM " . $this->db_table_prefix. "users
-					       WHERE username='".$username."' AND roleId='2'
+        $result = $this->commonDatabaseAction($sql);
+
+        if (mysql_num_rows($result))
+        {
+            $returnResult = mysql_result($result, 0);
+        }
+        else
+        {
+            if ($stat == true)
+            {
+                $returnResult = "";
+            }
+            else
+            {
+                $returnResult = 0;
+            }
+        }
+        return $returnResult;
+    }
+
+    /**
+     * user register process
+     * @param type $first_name
+     * @param type $last_name
+     * @param type $email
+     * @param type $username
+     * @param type $password
+     * @return boolean
+     */
+    function userRegistration($first_name, $last_name, $email, $username, $password)
+    {
+
+        $checking_query = "SELECT *
+						   FROM " . $this->db_table_prefix . "users
+					       WHERE username='" . $username . "' AND roleId='2'
   		     			   LIMIT 0,1";
 
-    	if( $this->singlevalue( $checking_query ) == 0 ) {
-	    	$query 	= "INSERT INTO
-	            	  " . $this->db_table_prefix. "users(username, password, firstName, lastName, email, roleId)
-	            	  VALUES('" . $username . "','" . $password."','" . $first_name."','" . $last_name."','". $email."', 2 )";
+        if ($this->singlevalue($checking_query) == 0)
+        {
+            $query = "INSERT INTO
+	            	  " . $this->db_table_prefix . "users(username, password, firstName, lastName, email, roleId)
+	            	  VALUES('" . $username . "','" . $password . "','" . $first_name . "','" . $last_name . "','" . $email . "', 2 )";
 
-	    	$this->commonDatabaseAction($query);
-	    	return true;
-    	}
-    	else
-    	{
-    		return false;
-    	}
+            $this->commonDatabaseAction($query);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Save download info with token and purchase id
+     * @param type $purchase_id
+     * @param type $download_token
+     * @param type $expires_on
+     * @return boolean
+     */
+    public function save_downlad_token($purchase_id, $download_token, $expires_on)
+    {
+        $query  = "INSERT INTO bs_downloads(token,purchase_id,expires_on) VALUES('$download_token', $purchase_id, $expires_on)";
+        $result = $this->commonDatabaseAction($query);
+        if ($result)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

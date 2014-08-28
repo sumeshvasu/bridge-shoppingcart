@@ -3,16 +3,16 @@
  * @project Bridge shoppingcart
  * Admin category page template
  */
-$per_page 		= 4;
-$page_deatils 	= $paginator->setPagination($per_page, $categories);
+$per_page     = 4;
+$page_deatils = $paginator->setPagination($per_page, $categories);
 
-$page 			= $page_deatils['page'];
-$show_page 		= $page_deatils['showPage'];
-$total_pages 	= $page_deatils['totalPages'];
-$start 			= $page_deatils['start'];
-$end 			= $page_deatils['end'];
+$page        = $page_deatils['page'];
+$show_page   = $page_deatils['showPage'];
+$total_pages = $page_deatils['totalPages'];
+$start       = $page_deatils['start'];
+$end         = $page_deatils['end'];
 
-$total_results = count( $categories );
+$total_results = count($categories);
 ?>
 <div class="row">
     <div class="col-lg-12">
@@ -27,9 +27,9 @@ $total_results = count( $categories );
         <div>
             <ul class="pager">
                 <?php
-                $reload = $_SERVER['PHP_SELF'] . "?page=categories&amp;tpages=" . $total_pages;
+                $reload        = $_SERVER['PHP_SELF'] . "?page=categories&amp;tpages=" . $total_pages;
                 if ($total_pages > 1)
-				{
+                {
                     echo $paginator->paginate($reload, $show_page, $total_pages);
                 }
                 ?>
@@ -37,9 +37,9 @@ $total_results = count( $categories );
         </div>
 
         <?php
-        if ( $categories )
-		{
-		?>
+        if ($categories)
+        {
+            ?>
             <div class="table-responsive" id="category-list">
                 <table class="table table-bordered table-hover table-striped tablesorter">
                     <thead>
@@ -53,13 +53,14 @@ $total_results = count( $categories );
                     </thead>
                     <tbody>
                         <?php
-                        for ( $i = $start; $i < $end; $i++ )
-						{
-                            if ( $i == $total_results )
-							{
+                        for ($i = $start; $i < $end; $i++)
+                        {
+                            if ($i == $total_results)
+                            {
                                 break;
                             }
-                            $row = $categories[$i]; ?>
+                            $row = $categories[$i];
+                            ?>
                             <tr>
                                 <td><?php echo $row['name'] ?></td>
                                 <td><?php echo ($row['status'] == 1) ? 'Enabled' : 'Disabled'; ?></td>
@@ -67,13 +68,13 @@ $total_results = count( $categories );
                                 <td><a class="btn btn-danger" id="category-delete" href="index.php?page=delete-category&id=<?php echo $row['id']; ?>">Delete</a></td>
                                 <td><a class="btn btn-info" id="category-products" href="index.php?page=products&catId=<?php echo $row['id']; ?>">View Products</a></td>
                             </tr>
-                        <?php
-						}
-						?>
+                            <?php
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
-        <?php
+            <?php
         }
         ?>
     </div>

@@ -26,7 +26,7 @@ $total_results = count($products);
         <div>
             <ul class="pager">
                 <?php
-                $reload = $_SERVER['PHP_SELF'] . "?page=products&amp;tpages=" . $total_pages;
+                $reload        = $_SERVER['PHP_SELF'] . "?page=products&amp;tpages=" . $total_pages;
                 if ($total_pages > 1)
                 {
                     echo $paginator->paginate($reload, $show_page, $total_pages);

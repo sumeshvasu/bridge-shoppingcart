@@ -8,7 +8,6 @@ if (session_status() == PHP_SESSION_NONE)
  * @project Bridge shoppingcart
  * Manage submitted form values( POST )
  */
-
 if (isset($_REQUEST['action']))
 {
     /* User Registartion */
@@ -94,28 +93,28 @@ if (isset($_REQUEST['action']))
         $product         = new ProductController();
         $uploadedFile    = '';
         $uploadedProduct = '';
-        
+
         $imagePath    = (isset($_FILES['product-image']['name']) && $_FILES['product-image']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-image']['name']) . "'" : '';
         $downloadLink = (isset($_FILES['product-upload']['name']) && $_FILES['product-upload']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-upload']['name']) . "'" : '';
         $productId    = (isset($_POST['product-id'])) ? $_POST['product-id'] : '';
 
         if (isset($_POST['product-id']))
-        {            
+        {
             $data['id'] = $_POST['product-id'];
             $productId  = $data['id'];
             if ($imagePath === '')
-            {                
+            {
                 $imagePath    = "'" . $_POST['hid-product-image'] . "'";
                 $uploadedFile = $imagePath;
             }
 
             if ($downloadLink === '')
-            {                
+            {
                 $downloadLink    = "'" . $_POST['hid-product-upload'] . "'";
                 $uploadedProduct = $downloadLink;
             }
         }
-        
+
         $data['name']         = "'" . mysql_escape_string($_POST['product-name']) . "'";
         $data['description']  = "'" . mysql_escape_string($_POST['product-desc']) . "'";
         $data['catId']        = $_POST['product-cat'];
@@ -124,9 +123,9 @@ if (isset($_REQUEST['action']))
         $data['validity']     = (is_numeric($_POST['product-validity'])) ? $_POST['product-validity'] : 0;
         $data['imagePath']    = $imagePath;
         $data['status']       = $_POST['product-status'];
-        
+
         $result = $product->insert($data);
-        
+
         /* Upload the thumbnail image and set path */
         $config = array(
             'overwrite'       => true,
@@ -134,7 +133,7 @@ if (isset($_REQUEST['action']))
             'allowed_types'   => 'jpg|gif|png|zip|gz',
             'filename_prefix' => (mysql_insert_id() != null) ? mysql_insert_id() . '_' : $productId . '_'
         );
-        
+
         $upload = new UploadController($config);
         if ($uploadedFile === '')
         {

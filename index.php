@@ -10,15 +10,17 @@ if (session_status() == PHP_SESSION_NONE)
     session_start();
 }
 
-error_reporting(E_ALL);
+error_reporting(E_ERROR);
 
 if (!isset($_SESSION ['user_id']))
 {
     $_SESSION ['user_id'] = '';
 }
 
+include('config.php');
 include_once 'controller/user-controller.php';
 include_once 'common/common-function.php';
+include_once 'PHPMailer/PHPMailerAutoload.php';
 
 $user        = new UserController ();
 $application = new AppController ();
@@ -59,7 +61,6 @@ if ((isset($_POST) ) && (isset($_POST ['btnLoginSubmit']) ))
 // Include the header layout
 include_once 'layout/header.php';
 
-
 $current_file_name = basename($_SERVER ['REQUEST_URI'], ".php");
 $current_file_name = '';
 
@@ -93,13 +94,14 @@ if ($current_file_name == 'index')
     include_once 'controller/category-controller.php';
     $category   = new CategoryController();
     $categories = $category->get();
-    if($application->is_logged_in(1,false)){
-        $home_page  = true;
+    if ($application->is_logged_in(1, false))
+    {
+        $home_page = true;
         include_once 'templates/admin-dashboard.php';
     }
     else
     {
-        $home_page  = true;
+        $home_page = true;
         include_once 'templates/home.php';
     }
 }
@@ -112,7 +114,7 @@ else if ($current_file_name == 'login')
     }
     else
     {
-		$application->redirect("index.php");
+        $application->redirect("index.php");
     }
 }
 // Registartion
@@ -150,7 +152,7 @@ else if ($current_file_name == 'buyitnow')
     }
     else
     {
-        if(!$application->is_admin())
+        if (!$application->is_admin())
         {
             // Get the selected product detail
             $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
@@ -191,26 +193,26 @@ else if ($current_file_name == 'addtocart')
 /* Check out */
 else if ($current_file_name == 'checkout')
 {
-	if (!$application->is_logged_in(0, false))
-	{
-		if (isset($_GET['productId']) && $_GET['page'] == 'checkout')
-		{
-			$_SESSION['page']       = $_GET['page'];
-			$_SESSION['url_params'] = array('productId' => $_GET['productId']);
-		}
-		$application->redirect("index.php?page=login");
-	}
-	else
-	{
-		include_once 'controller/product-controller.php';
-		/* Fetch products details */
+    if (!$application->is_logged_in(0, false))
+    {
+        if (isset($_GET['productId']) && $_GET['page'] == 'checkout')
+        {
+            $_SESSION['page']       = $_GET['page'];
+            $_SESSION['url_params'] = array('productId' => $_GET['productId']);
+        }
+        $application->redirect("index.php?page=login");
+    }
+    else
+    {
+        include_once 'controller/product-controller.php';
+        /* Fetch products details */
 
-		$product  		= new ProductController();
-		$productDetails = $product->get( array('id' => $_GET['productId']) );
+        $product        = new ProductController();
+        $productDetails = $product->get(array('id' => $_GET['productId']));
 
-		include_once 'templates/checkout.php';
-		//$application->redirect("paypal/paypal.php?action=process");
-	}
+        include_once 'templates/checkout.php';
+        //$application->redirect("paypal/paypal.php?action=process");
+    }
 }
 // Dashboard
 else if ($current_file_name == 'dashboard')
@@ -360,13 +362,43 @@ else if ($current_file_name == 'products-view')
 }
 
 // Paypal success
-else if($current_file_name == 'paypal')
+else if ($current_file_name == 'paypal')
 {
-	if(isset($_GET['action']) && $_GET['action'] == 'success')
-	{
-		print_r($_POST);
-		foreach ($_POST as $key => $value) { echo "$key: $value<br>"; }
-	}
+    if (isset($_GET['action']) && $_GET['action'] == 'success')
+    {
+        print_r($_POST);
+        foreach ($_POST as $key => $value)
+        {
+            echo "$key: $value<br>";
+        }
+    }
+}
+
+// Paypal Response success
+else if ($current_file_name == 'paymentResponse')
+{
+    if (isset($_GET['status']))
+    {
+        $payment_status = $_GET['status'];
+        if ($payment_status == 'error')
+        {
+            $message = "The payment not completed becuase of an error!";
+        }
+        else
+        {
+            $message = "The payment completed successfully!";
+        }
+
+        include_once 'templates/paymentResponse.php';
+    }
+}
+
+// mail test
+else if ($current_file_name == 'mailtest')
+{
+    include_once 'controller/product-controller.php';
+    $product = new ProductController();
+    $product->generate_download_link(3, 'sobin.yohannan@bridge-india.in', 5, $config['base_url']);
 }
 
 include_once 'layout/footer.php';

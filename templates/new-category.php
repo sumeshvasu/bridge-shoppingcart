@@ -6,8 +6,9 @@
 ?>
 
 <?php
-if (isset($category_info)) {
-
+if (isset($category_info))
+{
+    
 }
 ?>
 <div class="row">
@@ -24,62 +25,62 @@ if (isset($category_info)) {
                     <div class="form-group">
                         <label>Category Name</label>
                         <?php
-                        if ( isset( $category_info ) )
-						{
-						?>
+                        if (isset($category_info))
+                        {
+                            ?>
                             <input type="hidden" name="category-id" value="<?php echo $category_info['id']; ?>" />
                             <input class="form-control" id="category-name" name="category-name" value="<?php echo $category_info['name']; ?>">
-                        <?php
-						}
-						else
-						{
-						?>
+                            <?php
+                        }
+                        else
+                        {
+                            ?>
                             <input class="form-control" id="category-name" name="category-name" placeholder="Enter category name" />
-                        <?php
-						}
-						?>
+                            <?php
+                        }
+                        ?>
                         <p class="help-block"></p>
                     </div>
                     <div class="form-group">
                         <label>Status</label>
                         <?php
-                        if ( isset( $category_info ) )
-						{
-							if ( $category_info['status'] == 1 )
-							{
-							?>
+                        if (isset($category_info))
+                        {
+                            if ($category_info['status'] == 1)
+                            {
+                                ?>
                                 <label class="radio-inline">
                                     <input name="cat-status" id="cat-status-enabled" value="1" type="radio" checked=""> Enabled
                                 </label>
                                 <label class="radio-inline">
                                     <input name="cat-status" id="cat-status-disabled" value="0" type="radio"> Disabled
                                 </label>
-                            <?php
-							}
-							else
-							{
-							?>
+                                <?php
+                            }
+                            else
+                            {
+                                ?>
                                 <label class="radio-inline">
                                     <input name="cat-status" id="cat-status-enabled" value="1" type="radio" > Enabled
                                 </label>
                                 <label class="radio-inline">
                                     <input name="cat-status" id="cat-status-disabled" value="0" type="radio" checked=""> Disabled
                                 </label>
-                            <?php
-							}
-						}
-						else
-						{
-						?>
+                                <?php
+                            }
+                        }
+                        else
+                        {
+                            ?>
                             <label class="radio-inline">
                                 <input name="cat-status" id="cat-status-enabled" value="1" type="radio" checked=""> Enabled
                             </label>
                             <label class="radio-inline">
                                 <input name="cat-status" id="cat-status-disabled" value="0" type="radio"> Disabled
                             </label>
-                        <?php
-						}
-						?>
+                            <?php
+                        }
+                        ?>
                     </div>
 
                     <button type="submit" class="btn btn-primary" id="new-category-submit">Submit</button>

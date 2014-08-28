@@ -4,8 +4,8 @@
  * @project Bridge shoppingcart
  * Manage categories
  */
-
 include_once 'application-controller.php';
+
 //include_once 'database-controller.php';
 
 Class CategoryController extends AppController
@@ -26,9 +26,12 @@ Class CategoryController extends AppController
      */
     public function get($categoryId = null)
     {
-        if($categoryId != null) {
+        if ($categoryId != null)
+        {
             $categories = $this->database->categoryById($categoryId);
-        } else {
+        }
+        else
+        {
             $categories = $this->database->categoryGetAll();
         }
         return $categories;
@@ -54,4 +57,5 @@ Class CategoryController extends AppController
         $result = $this->database->categoryDelete($id);
         return $result;
     }
+
 }

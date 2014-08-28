@@ -4,7 +4,6 @@
  * @project Bridge shoppingcart
  * Manage User actions
  */
-
 include_once 'controller/application-controller.php';
 
 class UserController extends AppController
@@ -27,9 +26,12 @@ class UserController extends AppController
         $username = addslashes($post['username']);
         $password = addslashes($post['password']);
 
-        if ($username != '' && $password != '') {
+        if ($username != '' && $password != '')
+        {
             $this->database->userLogin($username, $password);
-        } else {
+        }
+        else
+        {
             $_SESSION ['user_login_error'] = 1;
         }
     }
@@ -38,17 +40,16 @@ class UserController extends AppController
      * Manage user registration submit
      * @param array $post
      */
-    function userRegistration( $post )
+    function userRegistration($post)
     {
 
-    	$first_name = addslashes($post['firstname']);
-    	$last_name 	= addslashes($post['lastname']);
-    	$email 		= addslashes($post['email']);
-    	$username	= addslashes($post['username']);
-    	$password 	= addslashes($post['password']);
-    	$result 	= $this->database->userRegistration($first_name, $last_name, $email, $username, $password);
-    	return $result;
-
+        $first_name = addslashes($post['firstname']);
+        $last_name  = addslashes($post['lastname']);
+        $email      = addslashes($post['email']);
+        $username   = addslashes($post['username']);
+        $password   = addslashes($post['password']);
+        $result     = $this->database->userRegistration($first_name, $last_name, $email, $username, $password);
+        return $result;
     }
 
 }

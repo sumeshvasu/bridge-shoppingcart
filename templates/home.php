@@ -7,15 +7,16 @@
 ?>
 
 <div class="row">
-    <?php if(isset($home_page) && $home_page) { ?>
-    <div class="col-lg-12">
-        <h1>User Front End <small></small></h1>
+    <?php if (isset($home_page) && $home_page)
+    { ?>
+        <div class="col-lg-12">
+            <h1>User Front End <small></small></h1>
 
-        <div class="alert alert-success alert-dismissable">
-            This is the user home page
+            <div class="alert alert-success alert-dismissable">
+                This is the user home page
+            </div>
         </div>
-    </div>
     <?php } ?>
-    
-    <?php include_once 'products-view.php'; ?>
+
+<?php include_once 'products-view.php'; ?>
 </div>

@@ -37,7 +37,7 @@
                                 <?php
                                 foreach ($categories as $cat)
                                 {
-                                    if ($product_info['catId'] == $cat['id'])
+                                    if ($product_info['cat_id'] == $cat['id'])
                                     {
                                         ?>
                                         <option value="<?php echo $cat['id']; ?>" selected="selected"><?php echo $cat['name']; ?></option>
@@ -59,17 +59,17 @@
                         </div>
                         <!--                        <div class="form-group">
                                                     <label>Download Link</label>
-                                                    <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" value="<?php echo $product_info['downloadLink']; ?>"/>
+                                                    <input class="form-control" id="product-link" name="product-link" placeholder="Enter product link" value="<?php echo $product_info['download_link']; ?>"/>
                                                 </div>-->
                         <div class="form-group">                            
                             <label>Upload Product</label>
                             <input type="file" id="product-upload" name="product-upload" placeholder="Upload product" />
-                            <label>Current Product: </label><span><a href="<?php echo 'uploads/' . $product_info['id'] . '_' . $product_info['downloadLink']; ?>"><?php echo $product_info['downloadLink']; ?></a></span>
-                            <input type="hidden" name="hid-product-upload" value="<?php echo $product_info['downloadLink']; ?>">
+                            <label>Current Product: </label><span><a href="<?php echo 'uploads/' . $product_info['id'] . '_' . $product_info['download_link']; ?>"><?php echo $product_info['download_link']; ?></a></span>
+                            <input type="hidden" name="hid-product-upload" value="<?php echo $product_info['download_link']; ?>">
                         </div>
                         <div class="form-group">
-                            <img src="uploads/<?php echo $product_info['id'] . '_' . $product_info['imagePath']; ?>" width="100" height="100" />
-                            <input type="hidden" name="hid-product-image" value="<?php echo $product_info['imagePath']; ?>">
+                            <img src="uploads/<?php echo $product_info['id'] . '_' . $product_info['image_path']; ?>" width="100" height="100" />
+                            <input type="hidden" name="hid-product-image" value="<?php echo $product_info['image_path']; ?>">
                             <label>Image</label>
                             <input type="file" id="product-image" name="product-image">
                         </div>

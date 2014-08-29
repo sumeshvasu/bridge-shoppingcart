@@ -21,7 +21,7 @@ if (isset($_REQUEST['action']))
                 include_once 'controller/user-controller.php';
                 $user = new UserController();
 
-                $result = $user->userRegistration(bridge_trim_deep($_POST));
+                $result = $user->user_registration(bridge_trim_deep($_POST));
 
                 $_SESSION ['user_registration_error']          = '';
                 $_SESSION ['user_registration_password_error'] = '';
@@ -94,34 +94,34 @@ if (isset($_REQUEST['action']))
         $uploadedFile    = '';
         $uploadedProduct = '';
 
-        $imagePath    = (isset($_FILES['product-image']['name']) && $_FILES['product-image']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-image']['name']) . "'" : '';
-        $downloadLink = (isset($_FILES['product-upload']['name']) && $_FILES['product-upload']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-upload']['name']) . "'" : '';
-        $productId    = (isset($_POST['product-id'])) ? $_POST['product-id'] : '';
+        $image_path    = (isset($_FILES['product-image']['name']) && $_FILES['product-image']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-image']['name']) . "'" : '';
+        $download_link = (isset($_FILES['product-upload']['name']) && $_FILES['product-upload']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-upload']['name']) . "'" : '';
+        $product_id    = (isset($_POST['product-id'])) ? $_POST['product-id'] : '';
 
         if (isset($_POST['product-id']))
         {
             $data['id'] = $_POST['product-id'];
-            $productId  = $data['id'];
-            if ($imagePath === '')
+            $product_id  = $data['id'];
+            if ($image_path === '')
             {
-                $imagePath    = "'" . $_POST['hid-product-image'] . "'";
-                $uploadedFile = $imagePath;
+                $image_path    = "'" . $_POST['hid-product-image'] . "'";
+                $uploadedFile = $image_path;
             }
 
-            if ($downloadLink === '')
+            if ($download_link === '')
             {
-                $downloadLink    = "'" . $_POST['hid-product-upload'] . "'";
-                $uploadedProduct = $downloadLink;
+                $download_link    = "'" . $_POST['hid-product-upload'] . "'";
+                $uploadedProduct = $download_link;
             }
         }
 
         $data['name']         = "'" . mysql_escape_string($_POST['product-name']) . "'";
         $data['description']  = "'" . mysql_escape_string($_POST['product-desc']) . "'";
-        $data['catId']        = $_POST['product-cat'];
+        $data['cat_id']        = $_POST['product-cat'];
         $data['price']        = (is_numeric($_POST['product-price'])) ? $_POST['product-price'] : 0;
-        $data['downloadLink'] = $downloadLink;
+        $data['download_link'] = $download_link;
         $data['validity']     = (is_numeric($_POST['product-validity'])) ? $_POST['product-validity'] : 0;
-        $data['imagePath']    = $imagePath;
+        $data['image_path']    = $image_path;
         $data['status']       = $_POST['product-status'];
 
         $result = $product->insert($data);
@@ -131,7 +131,7 @@ if (isset($_REQUEST['action']))
             'overwrite'       => true,
             'upload_path'     => 'uploads',
             'allowed_types'   => 'jpg|gif|png|zip|gz',
-            'filename_prefix' => (mysql_insert_id() != null) ? mysql_insert_id() . '_' : $productId . '_'
+            'filename_prefix' => (mysql_insert_id() != null) ? mysql_insert_id() . '_' : $product_id . '_'
         );
 
         $upload = new UploadController($config);

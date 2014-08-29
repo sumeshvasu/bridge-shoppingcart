@@ -29,7 +29,7 @@ $application = new AppController ();
 if ((isset($_POST) ) && (isset($_POST ['btnLoginSubmit']) ))
 {
 
-    $user->userLogin(bridge_trim_deep($_POST));
+    $user->user_login(bridge_trim_deep($_POST));
 
     // If admin logged in
     if ($application->is_logged_in(1, false))
@@ -83,24 +83,32 @@ else
 selectMenuItem($current_file_name);
 
 if ($current_file_name == 'index')
-{
+{   
     include_once 'controller/product-controller.php';
     // Get products
 
     $product  = new ProductController();
-    $products = $product->get();
+    //$products = $product->get(array('status' => 1));
 
     // Get categories
     include_once 'controller/category-controller.php';
     $category   = new CategoryController();
     $categories = $category->get();
+    
     if ($application->is_logged_in(1, false))
-    {
+    {    
+        $products = $product->get();
         $home_page = true;
-        include_once 'templates/admin-dashboard.php';
+        //include_once 'templates/admin-dashboard.php';
+        include_once 'templates/home.php';
     }
     else
-    {
+    {        
+        $products = $product->get(array('status' => 1));        
+        if($application->is_logged_in(0, false))
+        {
+            $purchased_products = $product->get_purchased_products($_SESSION['user_id']);            
+        }
         $home_page = true;
         include_once 'templates/home.php';
     }
@@ -141,12 +149,12 @@ else if ($current_file_name == 'buyitnow')
 {
     if (!$application->is_logged_in(0, false))
     {
-        if (isset($_GET['productId']) && $_GET['page'] == 'buyitnow')
+        if (isset($_GET['product_id']) && $_GET['page'] == 'buyitnow')
         {
-            $_SESSION ['buy_it_now_product_id'] = $_GET['productId'];
+            $_SESSION ['buy_it_now_product_id'] = $_GET['product_id'];
             //include_once 'templates/login.php';
             $_SESSION['page']                   = $_GET['page'];
-            $_SESSION['url_params']             = array('productId' => $_GET['productId']);
+            $_SESSION['url_params']             = array('product_id' => $_GET['product_id']);
         }
         $application->redirect("index.php?page=login");
     }
@@ -155,7 +163,7 @@ else if ($current_file_name == 'buyitnow')
         if (!$application->is_admin())
         {
             // Get the selected product detail
-            $product_id = (isset($_GET['productId'])) ? $_GET['productId'] : '';
+            $product_id = (isset($_GET['product_id'])) ? $_GET['product_id'] : '';
             if ($product_id != '')
             {
                 include_once 'controller/product-controller.php';
@@ -176,12 +184,12 @@ else if ($current_file_name == 'addtocart')
 {
     if (!$application->is_logged_in(0, false))
     {
-        if (isset($_GET['productId']) && $_GET['page'] == 'addtocart')
+        if (isset($_GET['product_id']) && $_GET['page'] == 'addtocart')
         {
-            //$_SESSION ['buy_it_now_product_id'] = $_GET['productId'];
+            //$_SESSION ['buy_it_now_product_id'] = $_GET['product_id'];
             //include_once 'templates/login.php';
             $_SESSION['page']       = $_GET['page'];
-            $_SESSION['url_params'] = array('productId' => $_GET['productId']);
+            $_SESSION['url_params'] = array('product_id' => $_GET['product_id']);
         }
         $application->redirect("index.php?page=login");
     }
@@ -195,10 +203,10 @@ else if ($current_file_name == 'checkout')
 {
     if (!$application->is_logged_in(0, false))
     {
-        if (isset($_GET['productId']) && $_GET['page'] == 'checkout')
+        if (isset($_GET['product_id']) && $_GET['page'] == 'checkout')
         {
             $_SESSION['page']       = $_GET['page'];
-            $_SESSION['url_params'] = array('productId' => $_GET['productId']);
+            $_SESSION['url_params'] = array('product_id' => $_GET['product_id']);
         }
         $application->redirect("index.php?page=login");
     }
@@ -208,7 +216,7 @@ else if ($current_file_name == 'checkout')
         /* Fetch products details */
 
         $product        = new ProductController();
-        $productDetails = $product->get(array('id' => $_GET['productId']));
+        $productDetails = $product->get(array('id' => $_GET['product_id']));
 
         include_once 'templates/checkout.php';
         //$application->redirect("paypal/paypal.php?action=process");
@@ -297,10 +305,10 @@ else if ($current_file_name == 'edit-product')
 {
     $application->is_logged_in(1);
 
-    $productId    = $_GET ['id'];
+    $product_id    = $_GET ['id'];
     include_once 'controller/product-controller.php';
     $product      = new ProductController ();
-    $product_info = $product->get(array('id' => $productId));
+    $product_info = $product->get(array('id' => $product_id));
 
     include_once 'controller/category-controller.php';
     $category   = new CategoryController ();
@@ -336,9 +344,9 @@ else if ($current_file_name == 'products-view')
     include_once 'controller/product-controller.php';
     // Get products
     $product = new ProductController();
-    if (isset($_GET['catId']))
+    if (isset($_GET['cat_id']))
     {
-        $products = $product->get(array('catId' => $_GET['catId']));
+        $products = $product->get(array('cat_id' => $_GET['cat_id']));
         if (count($products) > 0)
         {
             $cat_name = (isset($products[0]['catName'])) ? $products[0]['catName'] : '';
@@ -392,7 +400,35 @@ else if ($current_file_name == 'paymentResponse')
         include_once 'templates/paymentResponse.php';
     }
 }
-
+// Downloader page
+else if ($current_file_name == 'downloader')
+{
+    if (isset($_GET['token']) && $_GET['token'] != '')
+    {
+        $token          = $_GET['token'];
+        include_once 'controller/product-controller.php';
+        $product        = new ProductController();
+        $is_valid_token = $product->is_valid_download_token($token);
+        if ($is_valid_token)
+        {            
+            $product_info   = $product->get(array('token' => $_GET['token']));
+            $filename       = $product_info[0]['id'] . '_' . $product_info[0]['download_link'];
+            $path   = $config['uploads_folder'];
+            // Download file                              
+            //$product->download_file($path, $filename);
+            include("templates/downloadContent.php");
+            //printf("<script>location.href='download.php?token=$token'</script>");
+        }
+        else
+        {
+            echo 'Invalid Token';
+        }
+    }
+    else
+    {
+        
+    }
+}
 // mail test
 else if ($current_file_name == 'mailtest')
 {

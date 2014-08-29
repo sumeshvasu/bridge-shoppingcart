@@ -21,14 +21,14 @@ class UserController extends AppController
      * Manage login submit
      * @param array $post
      */
-    function userLogin($post)
+    function user_login($post)
     {
         $username = addslashes($post['username']);
         $password = addslashes($post['password']);
 
         if ($username != '' && $password != '')
         {
-            $this->database->userLogin($username, $password);
+            $this->database->user_login($username, $password);
         }
         else
         {
@@ -40,15 +40,33 @@ class UserController extends AppController
      * Manage user registration submit
      * @param array $post
      */
-    function userRegistration($post)
+    function user_registration($post)
     {
 
         $first_name = addslashes($post['firstname']);
         $last_name  = addslashes($post['lastname']);
         $email      = addslashes($post['email']);
         $username   = addslashes($post['username']);
-        $password   = addslashes($post['password']);
-        $result     = $this->database->userRegistration($first_name, $last_name, $email, $username, $password);
+        $password   = addslashes($post['password']);        
+        $result     = $this->database->user_registration($first_name, $last_name, $email, $username, $password);        
+        return $result;
+    }
+    
+    /**
+     * Get the uset info based on the filters
+     * $filters array conditional params
+     * @return array
+     */
+    function get($filters = array())
+    {
+        if (isset($filters['id']))
+        {
+            $result = $this->database->user_get_by_id($filters['id']);
+        }        
+        else
+        {
+            $result = $this->database->user_get_all();
+        }
         return $result;
     }
 

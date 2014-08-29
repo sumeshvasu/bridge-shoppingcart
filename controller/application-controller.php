@@ -35,10 +35,11 @@ class AppController
         $this->protocal          = strtolower($this->protocal_array[0]) . '://';
         $this->request_uri_array = explode('/', $_SERVER['REQUEST_URI']);
         $this->request_uri       = ($this->host == 'localhost') ? $this->request_uri_array[1] . '/' : '';
-
+        
         if ($page != null)
-        {
-            header('location:' . $this->protocal . $this->host . $this->request_uri . $page);
+        {            
+            $redirect_url = $this->protocal . $this->host . $this->request_uri . $page;
+            printf("<script>location.href='$redirect_url'</script>");
         }
         else
         {
@@ -109,6 +110,14 @@ class AppController
         }
     }
 
+    /**
+     * Send email
+     * @param array $email_ids
+     * @param string $subject
+     * @param string $message
+     * @param array $attachments
+     * @return boolean
+     */
     public function send_email($email_ids, $subject = '', $message = '', $attachments = null)
     {
         if (empty($email_ids))
@@ -120,9 +129,8 @@ class AppController
             $from_name   = (isset($email_ids['from_name'])) ? $email_ids['from_name'] : '';
             $from_email  = (isset($email_ids['from_email'])) ? $email_ids['from_email'] : '';
             $reply_name  = (isset($email_ids['reply_name'])) ? $email_ids['reply_name'] : '';
-            $reply_email = (isset($email_ids['reply_email'])) ? $email_ids['reply_email'] : '';
-            $to_name     = (isset($email_ids['to_name'])) ? $email_ids['to_name'] : '';
-            $to_email    = (isset($email_ids['to_email'])) ? $email_ids['to_email'] : '';
+            $reply_email = (isset($email_ids['reply_email'])) ? $email_ids['reply_email'] : '';            
+            $to_emails   = (isset($email_ids['to_email'])) ? $email_ids['to_email'] : array();                       
 
             //Create a new PHPMailer instance
             $mail            = new PHPMailer();
@@ -156,8 +164,11 @@ class AppController
             $mail->setFrom($from_email, $from_name);
             //Set an alternative reply-to address
             $mail->addReplyTo($reply_email, $reply_name);
-            //Set who the message is to be sent to
-            $mail->addAddress($to_email, $to_name);
+            //Set who the message is to be sent to            
+            foreach($to_emails as $to_email)
+            {
+                $mail->addAnAddress('to', $to_email['email'], $to_email['name']);
+            }
             //Set the subject line
             $mail->Subject  = $subject;
             //Read an HTML message body from an external file, convert referenced images to embedded,
@@ -176,13 +187,11 @@ class AppController
             //send the message, check for errors
             if (!$mail->send())
             {
-                die('mail sent to ' . $to_email);
-                //return false;
+                return false;
             }
             else
             {
-                die('mail sent');
-                //return true;
+                return true;
             }
         }
     }

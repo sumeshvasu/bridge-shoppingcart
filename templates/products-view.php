@@ -23,34 +23,37 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-lg-2">
-                    <div class="bs-example">
-                        <ul class="list-group">
-                            <li class="list-group-item">Categories</li>
+                    <div class="bs-example">                                                  
                             <?php
-                            if (isset($categories) && count($categories) > 0)
-                            {
-                                foreach ($categories as $category)
+                            if ((isset($products) && count($products) > 0) && (isset($categories) && count($categories) > 0))
+                            { ?>
+                            <ul class="list-group">  
+                                <li class="list-group-item">Categories</li>
+                            <?php   foreach ($categories as $category)
                                 {
                                     ?>
                                     <li class="list-group-item">                                            
                                         <span class="badge"><?php echo $category['no_of_products']; ?></span>
-                                        <a href="index.php?page=products-view&catId=<?php echo $category['id']; ?>"><?php echo $category['name']; ?></a>                                            
+                                        <a href="index.php?page=products-view&cat_id=<?php echo $category['id']; ?>"><?php echo $category['name']; ?></a>                                            
                                     </li>
                                     <?php
-                                }
-                            }
-                            ?>
-                        </ul>
+                                } ?>
+                                </ul>
+                            <?php } else { ?>
+                            <p>No products added yet!</p>
+                            <?php }
+                            ?>                        
                     </div>
                 </div>
 
                 <div class="col-lg-8" style="display: inline">
                     <div class="row">
-                        <?php
+                        <?php                        
+                        
                         if (isset($products) && count($products) > 0)
                         {
                             foreach ($products as $product)
-                            {
+                            {                                
                                 ?>
                                 <div class="col-lg-6">
                                     <div class="panel panel-success">
@@ -60,7 +63,7 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-lg-3">
-                                                    <img src="uploads/<?php echo $product['id'] . '_' . $product['imagePath']; ?>" width="100" height="100" />
+                                                    <img src="uploads/<?php echo $product['id'] . '_' . $product['image_path']; ?>" width="100" height="100" />
                                                 </div>                                                    
                                                 <div class="col-lg-6">
                                                     <div>
@@ -68,8 +71,8 @@
                                                     </div>
                                                     <p><?php echo $product['price']; ?></p>
                                                     <div class="row">
-                                                        <a href="./index.php?page=buyitnow&productId=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Buy It Now</button></a>
-                                                        <a href="./index.php?page=addtocart&productId=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Add to cart</button></a>
+                                                        <a href="./index.php?page=buyitnow&product_id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Buy It Now</button></a>
+                                                        <!--<a href="./index.php?page=addtocart&product_id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Add to cart</button></a>-->
                                                     </div>
                                                 </div>
                                             </div>                    

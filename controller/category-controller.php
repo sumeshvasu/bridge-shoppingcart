@@ -28,11 +28,11 @@ Class CategoryController extends AppController
     {
         if ($categoryId != null)
         {
-            $categories = $this->database->categoryById($categoryId);
+            $categories = $this->database->category_by_id($categoryId);
         }
         else
         {
-            $categories = $this->database->categoryGetAll();
+            $categories = $this->database->category_get_all();
         }
         return $categories;
     }
@@ -43,7 +43,7 @@ Class CategoryController extends AppController
      */
     public function insert($data)
     {
-        $result = $this->database->categoryInsert($data);
+        $result = $this->database->category_insert($data);
         return $result;
     }
 
@@ -54,7 +54,7 @@ Class CategoryController extends AppController
      */
     public function delete($id)
     {
-        $result = $this->database->categoryDelete($id);
+        $result = $this->database->category_delete($id);
         return $result;
     }
 

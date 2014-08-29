@@ -69,7 +69,7 @@ $total_results = count($products);
                                 <td><?php echo $row['description'] ?></td>
                                 <td><?php echo $row['price'] ?></td>
                                 <td><?php echo $row['validity'] ?></td>
-                                <td><img src="uploads/<?php echo $row['id'] . '_' . $row['imagePath'] ?>" width="100" height="100"></td>
+                                <td><img src="uploads/<?php echo $row['id'] . '_' . $row['image_path'] ?>" width="100" height="100"></td>
                                 <td><?php echo ($row['status'] == 1) ? 'Enabled' : 'Disabled'; ?></td>
                                 <td><a class="btn btn-success"  id="product-edit" href="index.php?page=edit-product&id=<?php echo $row['id']; ?>">Edit</a></td>
                                 <td><a class="btn btn-danger" id="product-delete" href="index.php?page=delete-product&id=<?php echo $row['id']; ?>">Delete</a></td>

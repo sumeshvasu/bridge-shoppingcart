@@ -796,7 +796,7 @@ class PHPMailer
      * @return boolean true on success, false if address already used or invalid in some way
      * @access protected
      */
-    protected function addAnAddress($kind, $address, $name = '')
+    public function addAnAddress($kind, $address, $name = '')
     {
         if (!preg_match('/^(to|cc|bcc|Reply-To)$/', $kind))
         {

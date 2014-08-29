@@ -27,13 +27,13 @@ class DataBaseController
         $this->db_name         = $config['name'];
         $this->db_table_prefix = $config['table_prefix'];
 
-        $this->dbConnect();
+        $this->db_connect();
     }
 
     /**
      * Create the DB conenction
      */
-    function dbConnect($mode = 'mysql')
+    function db_connect($mode = 'mysql')
     {
         if ($mode == 'mysql')
         {
@@ -69,34 +69,36 @@ class DataBaseController
      * @param string $username
      * @param string $password
      */
-    function userLogin($username, $password)
+    function user_login($username, $password)
     {
 
-        $query = "SELECT *
+        $query = "SELECT u.*
         		  FROM " . $this->db_table_prefix . "users u
-        		  JOIN " . $this->db_table_prefix . "roles r ON u.roleId = r.id
-        		  WHERE username='" . $username . "' AND password='" . $password . "'
+        		  JOIN " . $this->db_table_prefix . "roles r ON u.role_id = r.id
+        		  WHERE username='" . $username . "' AND password='" . md5($password) . "'
         		  LIMIT 0,1";
-
-        $result = $this->commonDatabaseAction($query);
-
-        if (mysql_num_rows($result) > 0)
+        
+        $result = $this->commonDatabaseAction($query); 
+        $user_details = array();        
+        while($r = mysql_fetch_assoc($result))
         {
-
-            $user_details                 = mysql_fetch_assoc($result);
+            $user_details = $r;
+        }        
+        if (mysql_num_rows($result) > 0 && !empty($user_details))
+        {   
             $_SESSION ['user_id']         = $user_details['id'];
-            $_SESSION ['user_first_name'] = $user_details['firstName'];
+            $_SESSION ['user_first_name'] = $user_details['firstname'];
 
-            if ($result['lastName'] !== '')
+            if ($result['firstname'] !== '')
             {
-                $_SESSION ['user_last_name'] = $user_details['lastName'];
+                $_SESSION ['user_last_name'] = $user_details['firstname'];
             }
             else
             {
                 $_SESSION ['user_last_name'] = '';
             }
 
-            $_SESSION ['user_role'] = $user_details['roleId'];
+            $_SESSION ['user_role'] = $user_details['role_id'];
         }
         else
         {
@@ -108,12 +110,12 @@ class DataBaseController
      * Get all categories
      * @return array
      */
-    public function categoryGetAll()
+    public function category_get_all()
     {
         $query = "SELECT c.*, count(p.id) as no_of_products
                    FROM " . $this->db_table_prefix . "categories c "
                 . "LEFT JOIN " . $this->db_table_prefix . "products p "
-                . "ON c.id = p.catId group by c.id";
+                . "ON c.id = p.cat_id group by c.id";
 
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0)
@@ -132,7 +134,7 @@ class DataBaseController
      * @param array $data
      * @return boolean
      */
-    public function categoryInsert($data)
+    public function category_insert($data)
     {
         if (isset($data['id']))
         {
@@ -163,7 +165,7 @@ class DataBaseController
      * Get category by id
      * @param int $id
      */
-    public function categoryById($id)
+    public function category_by_id($id)
     {
         $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "categories
@@ -183,7 +185,7 @@ class DataBaseController
      * Delete a category
      * @param int $id
      */
-    public function categoryDelete($id)
+    public function category_delete($id)
     {
         $query  = "DELETE
         	   FROM " . $this->db_table_prefix . "categories
@@ -203,10 +205,28 @@ class DataBaseController
      * Get all products
      * @return array
      */
-    public function productGetAll()
+    public function product_get_all($filters = array())
     {
-        $query  = "SELECT *
-                   FROM " . $this->db_table_prefix . "products";
+        $query   = "DESCRIBE bs_products";
+        $result  = $this->commonDatabaseAction($query);
+        $result  = $this->resultArray($result);
+        $columns = array_column($result, 'Field');
+
+        $query = "SELECT *
+                   FROM " . $this->db_table_prefix . "products ";
+        
+        if (!empty($filters))
+        {
+            $query .= 'WHERE 1';
+            foreach ($filters as $key => $value)
+            {
+                if (in_array($key, $columns))
+                {
+                    $query .= ' AND ' . $key . ' = ' . $value;
+                }
+            }
+        }
+
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0)
         {
@@ -222,7 +242,7 @@ class DataBaseController
      * Get the product by Id
      * @param int $id
      */
-    public function productGetById($id)
+    public function product_get_by_id($id)
     {
         $query  = "SELECT *
         	       FROM " . $this->db_table_prefix . "products
@@ -240,15 +260,15 @@ class DataBaseController
 
     /**
      * Get the product by category Id
-     * @param int $catId
+     * @param int $cat_id
      */
-    public function productGetByCategory($catId)
+    public function product_get_by_category($cat_id)
     {
         $query = "SELECT p.*, c.name as catName
         	   FROM " . $this->db_table_prefix . "products p
                JOIN " . $this->db_table_prefix . "categories c
-               ON p.catId = c.id
-        	   WHERE p.catId = $catId";
+               ON p.cat_id = c.id
+        	   WHERE p.cat_id = $cat_id";
 
         $result = $this->commonDatabaseAction($query);
         if (mysql_num_rows($result) > 0)
@@ -265,7 +285,7 @@ class DataBaseController
      * Insert product data
      * @param array $data
      */
-    public function productInsert($data)
+    public function product_insert($data)
     {
         if (isset($data['id']))
         {
@@ -310,7 +330,7 @@ class DataBaseController
      * @param int $id
      * @return bool
      */
-    public function productDelete($id)
+    public function product_delete($id)
     {
         $query  = "DELETE
         		  FROM " . $this->db_table_prefix . "products
@@ -398,19 +418,19 @@ class DataBaseController
      * @param type $password
      * @return boolean
      */
-    function userRegistration($first_name, $last_name, $email, $username, $password)
+    public function user_registration($first_name, $last_name, $email, $username, $password)
     {
 
         $checking_query = "SELECT *
 						   FROM " . $this->db_table_prefix . "users
-					       WHERE username='" . $username . "' AND roleId='2'
+					       WHERE username='" . $username . "' AND role_id='2'
   		     			   LIMIT 0,1";
-
+        
         if ($this->singlevalue($checking_query) == 0)
-        {
+        {            
             $query = "INSERT INTO
-	            	  " . $this->db_table_prefix . "users(username, password, firstName, lastName, email, roleId)
-	            	  VALUES('" . $username . "','" . $password . "','" . $first_name . "','" . $last_name . "','" . $email . "', 2 )";
+	            	  " . $this->db_table_prefix . "users(username, password, firstname, lastname, email, role_id)
+	            	  VALUES('" . $username . "','" . md5($password) . "','" . $first_name . "','" . $last_name . "','" . $email . "', 2 )";
 
             $this->commonDatabaseAction($query);
             return true;
@@ -430,7 +450,7 @@ class DataBaseController
      */
     public function save_downlad_token($purchase_id, $download_token, $expires_on)
     {
-        $query  = "INSERT INTO bs_downloads(token,purchase_id,expires_on) VALUES('$download_token', $purchase_id, $expires_on)";
+        $query  = "INSERT INTO " . $this->db_table_prefix . "downloads(token,purchase_id,expires_on) VALUES('$download_token', $purchase_id, $expires_on)";
         $result = $this->commonDatabaseAction($query);
         if ($result)
         {
@@ -439,6 +459,109 @@ class DataBaseController
         else
         {
             return false;
+        }
+    }
+
+    /**
+     * Get the user by Id
+     * @param int $id
+     */
+    public function user_get_by_id($id)
+    {
+        $query  = "SELECT *
+        	       FROM " . $this->db_table_prefix . "users
+        	       WHERE id = $id";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0)
+        {
+            return mysql_fetch_assoc($result);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Get all users
+     * @return array
+     */
+    public function user_get_all()
+    {
+        $query  = "SELECT *
+                   FROM " . $this->db_table_prefix . "users";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0)
+        {
+            return $this->resultArray($result);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Validate download token
+     * @param int $token
+     */
+    public function validate_download_token($token)
+    {
+        $query  = "SELECT *
+                   FROM " . $this->db_table_prefix . "downloads WHERE token = '$token' and expires_on > NOW()";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Get the product info from the download token
+     * @param string $token
+     * @return array
+     */
+    public function get_product_by_download_token($token)
+    {
+        $query  = "SELECT d.purchase_id,p.* FROM " . $this->db_table_prefix . "downloads d JOIN bs_purchase_products pr JOIN bs_products p
+                    ON d.purchase_id = pr.purchase_id AND pr.product_id = p.id
+                    WHERE d.token = '$token'";
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0)
+        {
+            return $this->resultArray($result);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Get the purchased products of user
+     * @param type $user_id
+     * @return array
+     */
+    public function get_user_purchased_products($user_id)
+    {
+        if ($user_id)
+        {
+            $query  = "SELECT * FROM " . $this->db_table_prefix . "purchases pr JOIN " . $this->db_table_prefix . "products p "
+                    . "JOIN " . $this->db_table_prefix . "downloads d "
+                    . "ON pr.product_id = p.id AND pr.id = d.purchase_id WHERE pr.user_id = $user_id";
+            $result = $this->commonDatabaseAction($query);            
+            if (mysql_num_rows($result) > 0)
+            {
+                return $this->resultArray($result);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 

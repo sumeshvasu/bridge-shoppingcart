@@ -58,7 +58,7 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-10">
-                                    <i class="fa fa-5x">Bridge Store</i>
+                                    <i class="fa fa-3x">Bridge Store</i>
                                 </div>
 
                             </div>

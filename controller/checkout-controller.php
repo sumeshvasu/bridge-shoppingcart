@@ -17,7 +17,7 @@ class CheckoutController extends AppController
         parent::__construct();
     }
 
-    function checkOut($action = null, $productId)
+    function checkOut($action = null, $product_id)
     {
         /*
          *
@@ -26,7 +26,7 @@ class CheckoutController extends AppController
          *   */
 
         $product              = new ProductController();
-        $this->productDetails = $product->get(array('id' => $productId));
+        $this->productDetails = $product->get(array('id' => $product_id));
 
         // Setup class
         $paypal = new PaypalController();

@@ -66,7 +66,7 @@ $total_results = count($categories);
                                 <td><?php echo ($row['status'] == 1) ? 'Enabled' : 'Disabled'; ?></td>
                                 <td><a class="btn btn-success"  id="category-edit" href="index.php?page=edit-category&id=<?php echo $row['id']; ?>">Edit</a></td>
                                 <td><a class="btn btn-danger" id="category-delete" href="index.php?page=delete-category&id=<?php echo $row['id']; ?>">Delete</a></td>
-                                <td><a class="btn btn-info" id="category-products" href="index.php?page=products&catId=<?php echo $row['id']; ?>">View Products</a></td>
+                                <td><a class="btn btn-info" id="category-products" href="index.php?page=products&cat_id=<?php echo $row['id']; ?>">View Products</a></td>
                             </tr>
                             <?php
                         }

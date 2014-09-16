@@ -53,26 +53,31 @@
                         if (isset($products) && count($products) > 0)
                         {
                             foreach ($products as $product)
-                            {                                
+                            {         
+                                $class = '';
+                                if(in_array($product['id'], $purchased_products))
+                                        $class = 'glyphicon glyphicon-ok-circle';
                                 ?>
                                 <div class="col-lg-6">
                                     <div class="panel panel-success">
                                         <div class="panel-heading">
-                                            <h3 class="panel-title"><?php echo $product['name']; ?></h3>
+                                            <h3 class="panel-title"><?php echo $product['name']; ?>
+                                            <span class="<?php echo $class; ?>" style="float: right;margin-top: 0;"></span>
+                                            </h3>
                                         </div>
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-4">
                                                     <img src="uploads/<?php echo $product['id'] . '_' . $product['image_path']; ?>" width="100" height="100" />
                                                 </div>                                                    
-                                                <div class="col-lg-6">
-                                                    <div>
-                                                        <?php echo $product['description']; ?>
+                                                <div class="col-lg-8">
+                                                    <div class="prod-desc">
+                                                        <?php echo $desc = (strlen($product['description']) > 100) ? substr($product['description'], 0, 100). '....' : $product['description']; ?>
                                                     </div>
-                                                    <p><?php echo $product['price']; ?></p>
-                                                    <div class="row">
+                                                    <p><strong><?php echo '₹ '. $product['price']; ?></strong></p>
+                                                    <div>
                                                         <a href="./index.php?page=buyitnow&product_id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Buy It Now</button></a>
-                                                        <!--<a href="./index.php?page=addtocart&product_id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Add to cart</button></a>-->
+                                                        <a href="./index.php?page=addtocart&product_id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-primary">Add to cart</button></a>
                                                     </div>
                                                 </div>
                                             </div>                    

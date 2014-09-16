@@ -85,10 +85,9 @@
                                             else
                                             {
                                                 ?>
-                                                <!-- <li><a href="./index.php?page=categories">Categories</a></li>
-                                                <li><a href="./index.php?page=products">Products</a></li>
-                                                <li><a href="./index.php?page=purchases">Purchases</a></li>
-                                                <li><a href="./index.php?page=customers">Customers</a></li> -->
+                                                <li><a href="./index.php?page=payment_history">Payment History</a></li>
+                                                <li><a href="./index.php?page=addtocart">Cart</a></li>
+                                            
                                                 <?php
                                             }
                                             ?>

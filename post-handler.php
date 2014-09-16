@@ -130,7 +130,7 @@ if (isset($_REQUEST['action']))
         $config = array(
             'overwrite'       => true,
             'upload_path'     => 'uploads',
-            'allowed_types'   => 'jpg|gif|png|zip|gz',
+            'allowed_types'   => $config['allowed_types'],
             'filename_prefix' => (mysql_insert_id() != null) ? mysql_insert_id() . '_' : $product_id . '_'
         );
 

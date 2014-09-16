@@ -151,7 +151,7 @@ class DataBaseController
         }
         $result = $this->commonDatabaseAction($query);
 
-        if (mysql_affected_rows($result) > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -191,7 +191,7 @@ class DataBaseController
         	   FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -315,7 +315,7 @@ class DataBaseController
         }
 
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0)
+        if (@@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -336,13 +336,117 @@ class DataBaseController
         		  FROM " . $this->db_table_prefix . "products
         		  WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-        if (mysql_affected_rows($result) > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
         else
         {
             return FALSE;
+        }
+    }
+    
+    /**
+     * Empty user cart
+     * 
+     * @param int $user_id
+     * @param int $product_id
+     * @return bool
+     * 
+     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
+     * @date 12 Sep 2014
+     */
+    public function empty_cart($user_id, $product_id = null)
+    {
+        $condition = (!empty($product_id)) ? "user_id = $user_id AND product_id = $product_id" : "user_id = $user_id";
+        
+        $query  = "DELETE
+        		  FROM " . $this->db_table_prefix . "cart
+        		  WHERE ". $condition;
+        
+        $result = $this->commonDatabaseAction($query);
+        if (@mysql_affected_rows($result) > 0)
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+    
+    /**
+     * Insert product to cart
+     * @param array $data
+     * 
+     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
+     * @date 11 Sep 2014
+     */
+    public function add_to_cart($data)
+    {
+        if(empty($data['product_id']))
+            return FALSE;
+        
+        
+        $cartQuery = "SELECT * FROM " . $this->db_table_prefix . "cart WHERE 
+            product_id = '".$data['product_id']."' AND user_id = '".$data['user_id']."' ";
+        
+        $cartResult = $this->commonDatabaseAction($cartQuery);
+        
+        if( mysql_num_rows($cartResult) > 0){
+            
+            $query     = "UPDATE " . $this->db_table_prefix . "cart 
+                SET date_time = " . date("Y-m-d h:i:s") . " WHERE 
+                product_id = '".$data['product_id']."' AND user_id = '".$data['user_id']."' ";
+        }
+        else{
+
+            $insertValues = 'null,';
+            foreach ($data as $key => $val)
+            {
+                $insertValues .= "'". $val ."',";
+            }
+            $insertValues = rtrim($insertValues, ',');
+            $query        = "INSERT INTO
+                     " . $this->db_table_prefix . "cart
+                     VALUES(" . $insertValues . ")";
+
+        }
+        $result = $this->commonDatabaseAction($query);
+        if (@mysql_affected_rows($result) > 0)
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+    
+    
+    /**
+     * Get the user cart products
+     * @param int $user_id
+     * 
+     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
+     * @date 11 Sep 2014
+     */
+    public function get_cart_products($user_id)
+    {
+        $query = "SELECT p.*
+        	   FROM " . $this->db_table_prefix . "cart c
+               JOIN " . $this->db_table_prefix . "products p
+               ON p.id = c.product_id
+        	   WHERE c.user_id = $user_id";
+
+        $result = $this->commonDatabaseAction($query);
+        if (mysql_num_rows($result) > 0)
+        {
+            return $this->resultArray($result);
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -546,13 +650,20 @@ class DataBaseController
      * @param type $user_id
      * @return array
      */
-    public function get_user_purchased_products($user_id)
+    public function get_user_purchased_products($user_id, $section = null)
     {
         if ($user_id)
         {
-            $query  = "SELECT * FROM " . $this->db_table_prefix . "purchases pr JOIN " . $this->db_table_prefix . "products p "
-                    . "JOIN " . $this->db_table_prefix . "downloads d "
-                    . "ON pr.product_id = p.id AND pr.id = d.purchase_id WHERE pr.user_id = $user_id";
+            $query  = "SELECT p . * , pr.transaction_id, pr.date_time, pr.total_price, pr.payment_status, d.token, d.expires_on FROM " 
+                    . $this->db_table_prefix . "purchase_products pp LEFT JOIN " 
+                    . $this->db_table_prefix . "purchases pr ON pp.purchase_id = pr.id LEFT JOIN "
+                    . $this->db_table_prefix . "products p ON pp.product_id = p.id LEFT JOIN " 
+                    . $this->db_table_prefix . "downloads d ON pr.id = d.purchase_id "
+                    . "WHERE pr.user_id = $user_id ";
+            
+            if(!empty($section) && $section == 'history')
+                $query .= " AND pr.payment_status = 'Completed'";
+            
             $result = $this->commonDatabaseAction($query);            
             if (mysql_num_rows($result) > 0)
             {

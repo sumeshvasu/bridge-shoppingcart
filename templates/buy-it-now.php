@@ -21,8 +21,8 @@ $base_url = $application->redirect();
                     <div>
                         <?php echo $productInfo['description']; ?>
                     </div>
-                    <p><?php echo $productInfo['price']; ?></p>
-                    <div class="row">
+                    <p><strong><?php echo '$ '. $productInfo['price']; ?></strong></p>
+                    <div class="">
                         <form method="post" action="<?php echo $base_url; ?>process.php">
                             <input type="hidden" name="itemname" value="<?php echo $productInfo['name']; ?>" />
                             <input type="hidden" name="itemnumber" value="<?php echo $productInfo['id']; ?>" />
@@ -30,6 +30,7 @@ $base_url = $application->redirect();
                             <input type="hidden" name="itemprice" value="<?php echo $productInfo['price']; ?>" />
                             <input type="hidden" name="itemQty" value="1" />
                             <button  type="submit" name="submitbutt" class="btn btn-primary">Proceed</button>
+                            <button type="button" name="shop" class="btn btn-group" onclick="javascript:window.location.href='<?php echo get_base_url(); ?>'">Continue Shopping</button>
                         </form>
 
                     </div>

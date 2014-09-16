@@ -34,7 +34,7 @@ class AppController
         $this->host              = $_SERVER['HTTP_HOST'] . '/';
         $this->protocal          = strtolower($this->protocal_array[0]) . '://';
         $this->request_uri_array = explode('/', $_SERVER['REQUEST_URI']);
-        $this->request_uri       = ($this->host == 'localhost') ? $this->request_uri_array[1] . '/' : '';
+        $this->request_uri       = ($this->host == 'localhost/') ? $this->request_uri_array[1] . '/' : '';
         
         if ($page != null)
         {            

@@ -13,23 +13,45 @@ $paypalmode = ($PayPalMode == 'sandbox') ? '.sandbox' : '';
 
 $db     = new DataBaseController();
 $mysqli = $db->db_connect('mysqli');
+get_db_config();
 
 $app = new AppController();
 
 if ($_POST) //Post Data received from product list page.
 {
 
-    $buyer_id        = $_SESSION["user_id"];    
-    $item_name        = $_POST["itemname"]; //Item Name
-    $item_price       = $_POST["itemprice"]; //Item Price
-    $item_number      = $_POST["itemnumber"]; //Item Number
-    $item_desc        = $_POST["itemdesc"]; //Item Number
-    $item_qty         = $_POST["itemQty"]; // Item Quantity
-    $Item_total_price  = ($item_price * $item_qty); //(Item Price x Quantity = Total) Get total amount of product;
+    $buyer_id         = $_SESSION["user_id"];   
+    $item_name        = (!empty($_POST["itemname"])) ? $_POST["itemname"] : 'Store Product Purchase'; //Item Name
+    $item_desc        = (!empty($_POST["itemdesc"])) ? $_POST["itemdesc"] : 'Bridge Store Product Purchase'; //Item Desc
+    $Item_total_price = 0;
+    $qty = 0;
     
+    if(!empty($_POST['products']) && is_array($_POST['products'])){
+
+        foreach ($_POST['products'] as $product) 
+        {
+            $item_qty          = $product["itemQty"]; // Item Quantity
+            $item_price        = $product["itemprice"]; //Item Price
+            $Item_total_price  = ($product['itemprice'] * $item_qty) + $Item_total_price; //(Item Price x Quantity = Total) Get total amount of product;
+            $qty               = $item_qty + $qty;
+        }
+    }
+    else{
+
+        $item_price       = $_POST["itemprice"]; //Item Price
+        $item_number      = $_POST["itemnumber"]; //Item Number
+        $item_qty         = $_POST["itemQty"]; // Item Quantity
+        $Item_total_price = ($item_price * $item_qty); //(Item Price x Quantity = Total) Get total amount of product;
+
+    }
+//    $item_price       = $_POST["itemprice"]; //Item Price
+//    $item_number      = $_POST["itemnumber"]; //Item Number
+//    $item_qty         = $_POST["itemQty"]; // Item Quantity
+//    $Item_total_price  = ($item_price * $item_qty); //(Item Price x Quantity = Total) Get total amount of product;
     
     //Other important variables like tax, shipping cost
-    $total_tax_amount  = 0.00;  //Sum of tax for all items in this order.
+    $qty              = 1; // Quanitity change will affect paypal amount calculation.
+    $total_tax_amount = 0.00;  //Sum of tax for all items in this order.
     $handaling_cost   = 0.00;  //Handling cost for this order.
     $insurance_cost   = 0.00;  //shipping insurance cost for this order.
     $shippin_discount = 0.00; //Shipping discount for this order. Specify this as negative number.
@@ -37,6 +59,26 @@ if ($_POST) //Post Data received from product list page.
     //Grand total including all tax, insurance, shipping cost and discount
     $grand_total      = ($Item_total_price + $total_tax_amount + $handaling_cost + $insurance_cost + $shippin_cost + $shippin_discount);
 
+    //Delete pending/cancelled purchases of user
+    $cartQuery = "SELECT * FROM bs_purchases 
+        WHERE user_id = '".$buyer_id."' AND payment_status = 'Pending' ";
+    
+    $cartResult = $mysqli->query($cartQuery);
+    if( $cartResult->num_rows > 0){
+        
+        while ($pending_purchase = mysqli_fetch_object($cartResult)) {
+            
+            $prodDelete  = "DELETE FROM bs_purchase_products
+              WHERE purchase_id = '".$pending_purchase->id."'";
+            $mysqli->query($prodDelete);
+            
+            $pendingDelete  = "DELETE FROM bs_purchases
+              WHERE id = '".$pending_purchase->id."'";
+            $mysqli->query($pendingDelete);
+        }
+
+    }
+    
     // Save the initial purchse data to db
     $query = "INSERT INTO bs_purchases
       (user_id, date_time, transaction_id, total_price, payment_status)
@@ -48,9 +90,19 @@ if ($_POST) //Post Data received from product list page.
     {
         $purchase_id = $mysqli->insert_id;
         // Insert into purchase products table
-        $query = "INSERT INTO bs_purchase_products(purchase_id, product_id) VALUES ($purchase_id, $item_number)";
-        $insert_row = $mysqli->query($query);
-        
+        if(!empty($_POST['products']) && is_array($_POST['products'])){
+
+            foreach ($_POST['products'] as $product) {
+
+                $item_number      = $product["itemnumber"]; //Item Number    
+                $query = "INSERT INTO bs_purchase_products(purchase_id, product_id) VALUES ($purchase_id, $item_number)";
+                $insert_row = $mysqli->query($query);
+            }
+        }
+        else{
+            $query = "INSERT INTO bs_purchase_products(purchase_id, product_id) VALUES ($purchase_id, $item_number)";
+            $insert_row = $mysqli->query($query);
+        }
     }
     else
     {
@@ -66,8 +118,8 @@ if ($_POST) //Post Data received from product list page.
             '&L_PAYMENTREQUEST_0_NAME0=' . ($item_name) .
             '&L_PAYMENTREQUEST_0_NUMBER0=' . ($item_number) .
             '&L_PAYMENTREQUEST_0_DESC0=' . ($item_desc) .
-            '&L_PAYMENTREQUEST_0_AMT0=' . ($item_price) .
-            '&L_PAYMENTREQUEST_0_QTY0=' . ($item_qty) .
+            '&L_PAYMENTREQUEST_0_AMT0=' . ($Item_total_price) .
+            '&L_PAYMENTREQUEST_0_QTY0=' . ($qty) .
             /*
               //Additional products (L_PAYMENTREQUEST_0_NAME0 becomes L_PAYMENTREQUEST_0_NAME1 and so on)
               '&L_PAYMENTREQUEST_0_NAME1='.($item_name2).
@@ -105,10 +157,10 @@ if ($_POST) //Post Data received from product list page.
 
     ############# set session variable for "DoExpressCheckoutPayment" #######
     $_SESSION['ItemName']        = $item_name; //Item Name
-    $_SESSION['ItemPrice']       = $item_price; //Item Price
+    $_SESSION['ItemPrice']       = $Item_total_price; //Item Price
     $_SESSION['ItemNumber']      = $item_number; //Item Number
     $_SESSION['ItemDesc']        = $item_desc; //Item Number
-    $_SESSION['ItemQty']         = $item_qty; // Item Quantity
+    $_SESSION['ItemQty']         = $qty; // Item Quantity
     $_SESSION['ItemTotalPrice']  = $Item_total_price; //(Item Price x Quantity = Total) Get total amount of product;
     $_SESSION['TotalTaxAmount']  = $total_tax_amount;  //Sum of tax for all items in this order.
     $_SESSION['HandalingCost']   = $handaling_cost;  //Handling cost for this order.

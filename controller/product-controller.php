@@ -42,6 +42,10 @@ class ProductController extends AppController
         {
             $result = $this->database->get_product_by_download_token($filters['token']);
         }
+        else if (isset($filters['cart']))
+        {
+            $result = $this->database->get_cart_products($filters['user_id']);
+        }
         else
         {
             $result = $this->database->product_get_all($filters);
@@ -54,9 +58,12 @@ class ProductController extends AppController
      * @param array $data
      * @return int
      */
-    public function insert($data)
+    public function insert($data, $type = null)
     {
-        $result = $this->database->product_insert($data);
+        if(!empty($type) && $type == "addtocart")
+            $result = $this->database->add_to_cart($data);
+        else
+            $result = $this->database->product_insert($data);
         return $result;
     }
 
@@ -186,11 +193,11 @@ class ProductController extends AppController
      * @param int $user_id
      * @return array
      */
-    public function get_purchased_products($user_id)
+    public function get_purchased_products($user_id, $section = null)
     {
         if($user_id)
         {
-            $purchased_products = $this->database->get_user_purchased_products($user_id);
+            $purchased_products = $this->database->get_user_purchased_products($user_id, $section);
             if($purchased_products)
             {
                 return $purchased_products;
@@ -216,5 +223,24 @@ class ProductController extends AppController
         
     }
     
+    
+    /**
+     * Empty cart after shopping
+     * @param int $user_id
+     * 
+     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
+     * @date 12 Sep 2014
+     */
+    public function empty_cart($user_id, $product_id = null)
+    {
+        if(empty($user_id))
+            return false;
+        
+        $cart = $this->database->empty_cart($user_id, $product_id);
+        if($cart)
+            return $cart;
+        else
+            return false;
+    }
 
 }

@@ -13,6 +13,10 @@
                 {
                     echo 'Error Occured';
                 }
+                else if ($payment_status == 'cancel')
+                {
+                    echo 'Cancelled';
+                }
                 else
                 {
                     echo 'Success';
@@ -25,10 +29,11 @@
                     <div class="row">
                             <?php echo $message; ?>
                         <p>
-<?php
-echo isset($_SESSION['payment_error_detail']) ? $_SESSION['payment_error_detail'] : 'Empty details';
-?>
+                        <?php
+                        echo (isset($_SESSION['payment_error_detail']) && $payment_status == 'error') ? urldecode($_SESSION['payment_error_detail']) : '';
+                        ?>
                         </p>
+                        <p><button type="submit" name="submitbutt" class="btn btn-primary" onclick="javascript:window.location.href='<?php echo get_base_url(); ?>'">Continue Shopping</button></p>
                     </div>               
                 </div>
             </div>

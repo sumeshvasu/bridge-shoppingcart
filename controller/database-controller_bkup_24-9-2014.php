@@ -5,9 +5,8 @@
  * Manage database queries and methods
  */
 include_once 'config.php';
-include_once 'base-controller.php';
 
-class DataBaseController extends BaseController
+class DataBaseController
 {
 
     protected $db_host;
@@ -21,41 +20,48 @@ class DataBaseController extends BaseController
      */
     function __construct()
     {
-//        $config                = get_db_config();
-//        $this->db_host         = $config['host'];
-//        $this->db_user         = $config['user'];
-//        $this->db_pass         = $config['password'];
-//        $this->db_name         = $config['name'];
-//        $this->db_table_prefix = $config['table_prefix'];
-//        $this->db_type         = '';
-//
-        parent::__construct();
-        $this->db_connection($this->db_type);     
+        $config                = get_db_config();
+        $this->db_host         = $config['host'];
+        $this->db_user         = $config['user'];
+        $this->db_pass         = $config['password'];
+        $this->db_name         = $config['name'];
+        $this->db_table_prefix = $config['table_prefix'];
+
+        $this->db_connect();
     }
 
     /**
      * Create the DB conenction
      */
-    function db_connection($mode = 'mysql')
+    function db_connect($mode = 'mysql')
     {
+        if ($mode == 'mysql')
+        {
+            $link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
 
-//        parent::queryText('Select * from bs_users ');
-//
-//        print_r('Query: '.$this->query . '<br>');
-//        print_r('Exec: '.$this->sqlResult . '<br>');
-//        echo '<br> Assoc: ';
-//        print_r($this->sqlAssoc);
-//        echo 'Row: ';
-//        print_r($this->sqlRow);
-//        echo '<br> Num: ';
-//        print_r($this->rowCount);
-//        print_r($this->sqlAffected);
-//        echo '<br> Specific: ';
-//        print_r($this->sqlGetField);
-//        echo '<br> Escape string: ';
-//        print_r(parent::sqlString('abcs'));
-//        die('here');
+            if (!$link)
+            {
+                echo 'DataBase Connection Error!!!';
+            }
+            else
+            {
+                mysql_select_db($this->db_name);
+            }
+        }
+        else
+        {
+            $mysqli = new mysqli($this->db_host, $this->db_user, $this->db_pass, $this->db_name);
 
+            //Output any connection error
+            if ($mysqli->connect_error)
+            {
+                echo 'DataBase Connection Error!!!';
+            }
+            else
+            {
+                return $mysqli;
+            }
+        }
     }
 
     /**
@@ -74,24 +80,25 @@ class DataBaseController extends BaseController
         
         $result = $this->commonDatabaseAction($query); 
         $user_details = array();        
-        $user_details = $this->sqlAssoc;
-        
-//        if (mysql_num_rows($result) > 0 && !empty($user_details))
-        if ($this->rowCount > 0 && !empty($user_details))
+        while($r = mysql_fetch_assoc($result))
+        {
+            $user_details = $r;
+        }        
+        if (mysql_num_rows($result) > 0 && !empty($user_details))
         {   
-            $_SESSION ['user_id']         = $user_details[0]['id'];
-            $_SESSION ['user_first_name'] = $user_details[0]['firstname'];
+            $_SESSION ['user_id']         = $user_details['id'];
+            $_SESSION ['user_first_name'] = $user_details['firstname'];
 
-            if ($user_details[0]['lastname'] !== '')
+            if ($result['firstname'] !== '')
             {
-                $_SESSION ['user_last_name'] = $user_details[0]['lastname'];
+                $_SESSION ['user_last_name'] = $user_details['firstname'];
             }
             else
             {
                 $_SESSION ['user_last_name'] = '';
             }
 
-            $_SESSION ['user_role'] = $user_details[0]['role_id'];
+            $_SESSION ['user_role'] = $user_details['role_id'];
         }
         else
         {
@@ -111,8 +118,7 @@ class DataBaseController extends BaseController
                 . "ON c.id = p.cat_id group by c.id";
 
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             //return $result;
             return $this->resultArray($result);
@@ -145,8 +151,7 @@ class DataBaseController extends BaseController
         }
         $result = $this->commonDatabaseAction($query);
 
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -161,16 +166,14 @@ class DataBaseController extends BaseController
      * @param int $id
      */
     public function category_by_id($id)
-    {die('category_by_id');
+    {
         $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
-//            return mysql_fetch_assoc($result);
-            return $this->sqlAssoc;
+            return mysql_fetch_assoc($result);
         }
         else
         {
@@ -188,8 +191,7 @@ class DataBaseController extends BaseController
         	   FROM " . $this->db_table_prefix . "categories
         	   WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -226,8 +228,7 @@ class DataBaseController extends BaseController
         }
 
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return $this->resultArray($result);
         }
@@ -247,11 +248,9 @@ class DataBaseController extends BaseController
         	       FROM " . $this->db_table_prefix . "products
         	       WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
-//            return mysql_fetch_assoc($result);
-            return $this->sqlAssoc;
+            return mysql_fetch_assoc($result);
         }
         else
         {
@@ -272,8 +271,7 @@ class DataBaseController extends BaseController
         	   WHERE p.cat_id = $cat_id";
 
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return $this->resultArray($result);
         }
@@ -318,8 +316,7 @@ class DataBaseController extends BaseController
         }
 
         $result = $this->commonDatabaseAction($query);
-//        if (@@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -340,8 +337,7 @@ class DataBaseController extends BaseController
         		  FROM " . $this->db_table_prefix . "products
         		  WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -370,8 +366,7 @@ class DataBaseController extends BaseController
         		  WHERE ". $condition;
         
         $result = $this->commonDatabaseAction($query);
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -399,8 +394,7 @@ class DataBaseController extends BaseController
         
         $cartResult = $this->commonDatabaseAction($cartQuery);
         
-//        if( mysql_num_rows($cartResult) > 0){
-        if( $this->rowCount > 0){
+        if( mysql_num_rows($cartResult) > 0){
             
             $query     = "UPDATE " . $this->db_table_prefix . "cart 
                 SET date_time = " . date("Y-m-d h:i:s") . " WHERE 
@@ -420,8 +414,7 @@ class DataBaseController extends BaseController
 
         }
         $result = $this->commonDatabaseAction($query);
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -448,8 +441,7 @@ class DataBaseController extends BaseController
         	   WHERE c.user_id = $user_id";
 
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return $this->resultArray($result);
         }
@@ -466,14 +458,11 @@ class DataBaseController extends BaseController
      */
     public function resultArray($recordset)
     {
-                
-//        $result = array();
-//        while ($row    = mysql_fetch_assoc($recordset))
-//        {
-//            $result[] = $row; // Inside while loop
-//        }
-//        return $result;
-        $result = $this->sqlAssoc;
+        $result = array();
+        while ($row    = mysql_fetch_assoc($recordset))
+        {
+            $result[] = $row; // Inside while loop
+        }
         return $result;
     }
 
@@ -482,22 +471,19 @@ class DataBaseController extends BaseController
      * @param string $query
      * @return array
      */
-    function commonDatabaseAction($query, $params = null)
+    function commonDatabaseAction($query)
     {
-        parent::queryText($query, $params);
-        return $this->sqlResult;
-//        
-//        $result = mysql_query($query);
-//
-//        if (!mysql_error())
-//        {
-//            return $result;
-//        }
-//        else
-//        {
-//            //echo mysql_error();
-//            return false;
-//        }
+        $result = mysql_query($query);
+
+        if (!mysql_error())
+        {
+            return $result;
+        }
+        else
+        {
+            //echo mysql_error();
+            return false;
+        }
     }
 
     /**
@@ -508,13 +494,11 @@ class DataBaseController extends BaseController
     function singlevalue($sql, $stat = FALSE)
     {
 
-        $result = $this->commonDatabaseAction($sql, 0);
+        $result = $this->commonDatabaseAction($sql);
 
-//        if (mysql_num_rows($result))
-        if ($this->rowCount)
+        if (mysql_num_rows($result))
         {
-//            $returnResult = mysql_result($result, 0);
-            $returnResult = $this->sqlResult;
+            $returnResult = mysql_result($result, 0);
         }
         else
         {
@@ -593,11 +577,9 @@ class DataBaseController extends BaseController
         	       FROM " . $this->db_table_prefix . "users
         	       WHERE id = $id";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
-//            return mysql_fetch_assoc($result);
-            return $this->sqlAssoc;
+            return mysql_fetch_assoc($result);
         }
         else
         {
@@ -614,8 +596,7 @@ class DataBaseController extends BaseController
         $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "users";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return $this->resultArray($result);
         }
@@ -640,8 +621,7 @@ class DataBaseController extends BaseController
         foreach ($data as $key => $val)
         {
             if($key != 'id' && $key != 'submit')
-//                $setValues .= $key . ' = ' . mysql_real_escape_string ( $val ) . ',';
-                $setValues .= $key . ' = ' . parent::sqlString( $val ) . ',';
+                $setValues .= $key . ' = ' . mysql_real_escape_string ( $val ) . ',';
         }
         $setValues = rtrim($setValues, ',') . ' ';
         $query     = "UPDATE
@@ -650,8 +630,7 @@ class DataBaseController extends BaseController
                  WHERE id = " . $data['id'];
 
         $result = $this->commonDatabaseAction($query);
-//        if (@@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
@@ -671,8 +650,7 @@ class DataBaseController extends BaseController
         $query  = "SELECT *
                    FROM " . $this->db_table_prefix . "downloads WHERE token = '$token' and expires_on > NOW()";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return true;
         }
@@ -693,8 +671,7 @@ class DataBaseController extends BaseController
                     ON d.purchase_id = pr.purchase_id AND pr.product_id = p.id
                     WHERE d.token = '$token'";
         $result = $this->commonDatabaseAction($query);
-//        if (mysql_num_rows($result) > 0)
-        if ($this->rowCount > 0)
+        if (mysql_num_rows($result) > 0)
         {
             return $this->resultArray($result);
         }
@@ -716,7 +693,7 @@ class DataBaseController extends BaseController
             $condition = ($user_id == 'all') ? '1' : "pr.user_id = $user_id ";
             
             $query  = "SELECT p . * , pr.transaction_id, pr.date_time, pr.total_price, pr.payment_status, 
-                    d.token, d.expires_on, d.download_count, CONCAT(u.firstname, ' ', u.lastname) as user, u.email FROM " 
+                    d.token, d.expires_on, CONCAT(u.firstname, ' ', u.lastname) as user, u.email FROM " 
                     . $this->db_table_prefix . "purchase_products pp LEFT JOIN " 
                     . $this->db_table_prefix . "purchases pr ON pp.purchase_id = pr.id LEFT JOIN "
                     . $this->db_table_prefix . "products p ON pp.product_id = p.id LEFT JOIN " 
@@ -728,8 +705,7 @@ class DataBaseController extends BaseController
                 $query .= " AND pr.payment_status = 'Completed'";
             
             $result = $this->commonDatabaseAction($query);            
-//            if (mysql_num_rows($result) > 0)
-            if ($this->rowCount > 0)
+            if (mysql_num_rows($result) > 0)
             {
                 return $this->resultArray($result);
             }
@@ -743,7 +719,7 @@ class DataBaseController extends BaseController
     }
     
     
-    /**
+        /**
      * Insert category
      * @param array $data
      * @return boolean
@@ -756,50 +732,17 @@ class DataBaseController extends BaseController
         $query = "UPDATE
                  " . $this->db_table_prefix . "downloads
                  SET download_count = download_count+1 
-                 WHERE token = '" . parent::sqlString($data['token']) . "'";
+                 WHERE token = '" . mysql_real_escape_string($data['token']) . "'";
         
         $result = $this->commonDatabaseAction($query);
 
-//        if (@mysql_affected_rows($result) > 0)
-        if ($this->sqlAffected > 0)
+        if (@mysql_affected_rows($result) > 0)
         {
             return TRUE;
         }
         else
         {
             return FALSE;
-        }
-    }
-        
-    /**
-     * Empty user cart
-     * 
-     * @param int $user_id
-     * @param int $product_id
-     * @return bool
-     * 
-     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
-     * @date 12 Sep 2014
-     */
-    public function delete_pending_purchases($user_id)
-    {
-        $query  = "SELECT * 
-        		  FROM " . $this->db_table_prefix . "purchases
-        		  WHERE user_id = $user_id AND payment_status = 'Pending' ";
-        
-        $result = $this->commonDatabaseAction($query);
-        
-        if ($this->rowCount > 0)
-        {
-            foreach ($this->resultArray($result) as $pendingPurchases) 
-            {
-                echo $pendingPurchases['id'];
-            }
-            return ;
-        }
-        else
-        {
-            return null;
         }
     }
 

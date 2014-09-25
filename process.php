@@ -114,6 +114,7 @@ if ($_POST) //Post Data received from product list page.
     $padata = '&METHOD=SetExpressCheckout' .
             '&RETURNURL=' . ($PayPalReturnURL ) .
             '&CANCELURL=' . ($PayPalCancelURL) .
+            '&NOTIFYURL=http://localhost/bridge-shoppingcart/paypal/ipn_paypal.php' .
             '&PAYMENTREQUEST_0_PAYMENTACTION=' . ("SALE") .
             '&L_PAYMENTREQUEST_0_NAME0=' . ($item_name) .
             '&L_PAYMENTREQUEST_0_NUMBER0=' . ($item_number) .
@@ -211,7 +212,8 @@ if (isset($_GET["token"]) && isset($_GET["PayerID"]))
     $shippin_cost     = $_SESSION['ShippinCost']; //Although you may change the value later, try to pass in a shipping amount that is reasonably accurate.
     $grand_total      = $_SESSION['GrandTotal'];
 
-    $padata = '&TOKEN=' . ($token) .
+    $padata = '&NOTIFYURL=http://localhost/bridge-shoppingcart/paypal/ipn_paypal.php' .
+            '&TOKEN=' . ($token) .
             '&PAYERID=' . ($payer_id) .
             '&PAYMENTREQUEST_0_PAYMENTACTION=' . ("SALE") .
             //set item info here, otherwise we won't see product details later

@@ -70,6 +70,7 @@ else {
 selectMenuItem($current_file_name);
 
 if ($current_file_name == 'index') {
+
     include_once 'controller/product-controller.php';
     // Get products
 
@@ -319,12 +320,49 @@ else if ($current_file_name == 'delete-product') {
         $product->redirect('index.php?page=products');
     }
 }
-// Purchases
+// All Purchases list
 else if ($current_file_name == 'purchases') {
+        
+    $application->is_logged_in(1); // only admin allowed
+    
+    include_once 'controller/product-controller.php';
+    include_once 'controller/paginate-controller.php';
+
+    $paginator = new PaginateController ();    
+    $product   = new ProductController();
+    
+    $purchased_products = $product->get_purchased_products('all', 'history'); // get all purchase history
+
+    foreach ($purchased_products as $key => $products) 
+    {
+        $transactions[$products['transaction_id']]['transaction_id'] = $products['transaction_id'];
+        $transactions[$products['transaction_id']]['payment_status'] = $products['payment_status'];
+        $transactions[$products['transaction_id']]['total_price'] = $products['total_price'];
+        $transactions[$products['transaction_id']]['date_time'] = $products['date_time'];
+        $transactions[$products['transaction_id']]['token'] = $products['token'];
+        $transactions[$products['transaction_id']]['expires_on'] = $products['expires_on'];
+        $transactions[$products['transaction_id']]['user'] = $products['user'];
+        $transactions[$products['transaction_id']]['email'] = $products['email'];
+        $transactions[$products['transaction_id']]['downloads'] = $products['download_count'];
+        $transactions[$products['transaction_id']]['products'][] = $products;
+    }
+    $transactions = array_values($transactions);
+    
     include_once 'purchases.php';
 }
 // Customers
 else if ($current_file_name == 'customers') {
+        
+    $application->is_logged_in(1);
+    
+    include_once 'controller/user-controller.php';
+    include_once 'controller/paginate-controller.php';
+
+    $paginator = new PaginateController ();
+    
+    $users = new UserController();
+    $allusers = $users->get();
+    
     include_once 'customers.php';
 }
 
@@ -365,23 +403,30 @@ else if ($current_file_name == 'paypal') {
 
 // Paypal Response success
 else if ($current_file_name == 'paymentResponse') {
+    
+    // Get products
+    include_once 'controller/product-controller.php';
+    $product = new ProductController();
+    
     if (isset($_GET['status'])) {
+        
         $payment_status = $_GET['status'];
-        if ($payment_status == 'error') {
+        
+        if ($payment_status == 'error')
             $message = "The payment not completed because of an error!";
-        }
+        
         else {
+            
             $message = "The payment completed successfully!";
-            include_once 'controller/product-controller.php';
-
-            // Get products
-            $product = new ProductController();
             $product->empty_cart($_SESSION ['user_id'], $_GET['product_id']);
         }
     }
     elseif (isset($_GET['token'])) {
+        
         $payment_status = 'cancel';
-        $message = "The payment is cancelled!";
+        $message = "The payment is cancelled!";        
+        $var = $product->delete_purchases($_SESSION ['user_id']);
+        print_r($var);die('outside');
     }
     include_once 'templates/paymentResponse.php';
 }

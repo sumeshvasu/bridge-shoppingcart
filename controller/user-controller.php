@@ -69,5 +69,23 @@ class UserController extends AppController
         }
         return $result;
     }
+    
+    /**
+     * Insert / updaet the user data
+     * $filters array conditional params
+     * @return array
+     */
+    function user_update($data)
+    {
+        if (!empty($data))
+        {
+            $result = $this->database->update_user($data);
+        }        
+        else
+        {
+            $result = '';
+        }
+        return $result;
+    }
 
 }

@@ -93,7 +93,7 @@ if (isset($_REQUEST['action']))
         $product         = new ProductController();
         $uploadedFile    = '';
         $uploadedProduct = '';
-
+        
         $image_path    = (isset($_FILES['product-image']['name']) && $_FILES['product-image']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-image']['name']) . "'" : '';
         $download_link = (isset($_FILES['product-upload']['name']) && $_FILES['product-upload']['name'] != null) ? "'" . mysql_escape_string($_FILES['product-upload']['name']) . "'" : '';
         $product_id    = (isset($_POST['product-id'])) ? $_POST['product-id'] : '';
@@ -125,7 +125,8 @@ if (isset($_REQUEST['action']))
         $data['status']       = $_POST['product-status'];
 
         $result = $product->insert($data);
-
+        
+        
         /* Upload the thumbnail image and set path */
         $config = array(
             'overwrite'       => true,
@@ -145,9 +146,34 @@ if (isset($_REQUEST['action']))
         {
             $uploadedPrduct = $upload->do_upload('product-upload');
         }
+        
+        $uploadedFile = trim(preg_replace('/'.$config["filename_prefix"].'/', '', $uploadedFile, 1), '\'');
+        $uploadedPrduct = trim(preg_replace('/'.$config["filename_prefix"].'/', '', $uploadedPrduct, 1), '\'');
+        
+        $var = $product->insert(array(
+                            'id'=> (mysql_insert_id() != null) ? mysql_insert_id() : $product_id ,
+                            'image_path' => $uploadedFile,
+                            'download_link' => $uploadedPrduct,
+                            ));
 
         /* Redirect to categories page */
         $product->redirect("index.php?page=products");
+    }
+    
+    
+
+    /* User update */
+    if ($_REQUEST['action'] == 'EDIT_USER')
+    {
+        include_once 'controller/user-controller.php';            
+        $users = new UserController();
+        
+        if ($_POST['id'])
+            $var = $users->user_update($_POST);
+        
+        
+        /* Redirect to categories page */
+        $users->redirect("index.php?page=customers&pageNo=". $_GET['page']);
     }
 }
 ?>

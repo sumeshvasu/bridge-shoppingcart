@@ -1,7 +1,7 @@
 <?php
 /**
  * @project Bridge shoppingcart
- * Admin payment history page template
+ * User payment history page template
  */
 
 ?>
@@ -40,7 +40,7 @@
                                 <input type="button" name="view_prod" class="btn btn-primary" value="View Products" onclick="javascript:displayDetails('<?php echo $payment['transaction_id']; ?>')">
                                 <?php
                                 if( $payment['expires_on'] > date("Y-m-d h:i:s")){
-                                ?>
+//                                ?>
                                 <input type="button" name="download_prod" class="btn btn-primary" value="Download" onclick="javascript:window.location.href='<?php echo get_base_url(). 'index.php?page=downloader&token=' . $payment['token'] ?>'">
                                 <?php } ?>
                             </td>

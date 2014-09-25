@@ -10,68 +10,97 @@ include_once 'controller/database-controller.php';
 include_once 'common/common-function.php';
 //include_once 'layout/footer.php';
 
+// get product info
 $product        = new ProductController();
 $product_info   = $product->get(array('token' => $_GET['token']));
-$filename       = $product_info[0]['id'] . '_' . $product_info[0]['download_link'];
-//die($filename);
-$file           = $config['uploads_folder'] . '/' . $filename;
-$finfo          = finfo_open(FILEINFO_MIME_TYPE);
-$file_mime_type = finfo_file($finfo, $file);
-$len            = filesize($file); // Calculate File Size
+
 ob_clean();
-chmod("$file", 0777);
+$error = false;
+$download = false;
+
+// create zip of products
+$zipname = $config['uploads_folder'] . '/products'.  strtotime(date("Y-m-d")).'.zip';
+$zip = new ZipArchive;
+$zip->open($zipname, ZipArchive::CREATE);
+
 if (headers_sent())
 {
-    $error = 'HTTP header already sent';
+    $error .= 'HTTP header already sent <br>';
 }
-else if(!file_exists($file))
+
+foreach ($product_info as $key => $value) 
 {
-    header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    $error =  'File not found';
-}
-else if (!is_readable($file))
-{
-    header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-    $error =  'File not readable';
-}
-else
-{
-// ======== Old header format =============
-//    header("Pragma: public");
-//    header("Expires: 0");
-//    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-//    header("Cache-Control: public");
-//    header("Content-Description: File Transfer");
-//    header("Content-Type:pplication/octet-stream"); // Send type of file
-//    $header = "Content-Disposition: attachment; filename=$filename;"; // Send File Name
-//    header($header);
-//    header("Content-Transfer-Encoding: binary");
-//    header("Content-Length: " . $len); // Send File Size            
-//    readfile($file);
-// =======================================
     
-    $fopen = @fopen($file,"rb");
-    if($fopen != NULL)
-    {		
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header("Content-Type: application/force-download",FALSE);
-        header("Content-Type: application/x-zip-compressed",FALSE);
-        header("Content-Type: application/download", FALSE); 
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: " . filesize($file) + 100);			
-        fpassthru($fopen);			
-        fclose($fopen);
-        exit();
+    $filename   = '';
+    $file       = '';
+    $filename   = $product_info[$key]['id'] . '_' . $product_info[$key]['download_link'];
+    $file       = $config['uploads_folder'] . '/' . $filename;
+
+    chmod("$file", 0777);
+
+    if(!file_exists($file))
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        $error .=  'File not found  <br>';
     }
-    else{
-        $error =  'Error occured while reading file';
+    else if (!is_readable($file))
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        $error .=  'File not readable  <br>';
     }
+    else if(!$fopen = @fopen($file,"rb")){
+        $error .=  'Error occured while reading file  <br>';
+    }
+
+    if(!$error){
+        $download = true;
+        $zip->addFile($file);
+    }
+
 }
+$zip->close();
+//die($file);
+
+if($download){
+   
+    $db = new DataBaseController();
+    $db->update_downlaod_count(array(
+        'token' => $_GET['token']));
+
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: public");
+    header("Content-Description: File Transfer");
+    header("Content-Type: application/force-download",FALSE);
+    header("Content-Type: application/x-zip-compressed",TRUE);
+    header("Content-Type: application/download", FALSE); 
+    header("Content-Disposition: attachment; filename=\"$zipname\"");
+    header("Content-Transfer-Encoding: binary");
+    header("Content-Length: " . filesize($zipname) + 100);	
+    readfile($zipname);
+    unlink($zipname);
+    exit();
+}
+
+// Old format
+
+//$finfo          = finfo_open(FILEINFO_MIME_TYPE);
+//$file_mime_type = finfo_file($finfo, $file);
+
+//    $fopen = @fopen($file,"rb");
+//    if($fopen != NULL)
+//    {	
+//        header(...)...
+//        header("Content-Disposition: attachment; filename=\"$filename\"");
+//        header("Content-Length: " . filesize($file) + 100);			
+//        fpassthru($fopen);			
+//        fclose($fopen);
+//        exit();
+//    }
+//    else{
+//        $error =  'Error occured while reading file';
+//    }
 
 ob_clean();
 
@@ -96,8 +125,6 @@ if(!empty($error)){
         </div>
     </div>
 </div>
-
-<?php
-}
+<?php } 
 include_once 'layout/footer.php';
 ?>

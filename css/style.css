@@ -128,3 +128,99 @@ nav #pull {
         /* border-bottom: 1px solid #576979; */
     }
 }
+
+
+/* ========== Footer style ================= */
+.footer {
+height: 220px !important;
+}
+.footer {
+/*width: 960px;*/
+padding: 30px 20px 0px;
+background-image: url(../img/footer_top_bg.png);
+background-position: 0px 0px;
+background-repeat: no-repeat;
+background-color: #2e3945 !important;
+margin: 20px 0 0 0;
+}
+
+.footer .left {
+width: 686px;
+height: auto;
+float: left;
+}
+
+.footer .right {
+width: 233px;
+height: auto;
+float: right;
+color: white;
+font-size: 11px;
+line-height: 18px;
+}
+
+.block-nice-menus {
+line-height: normal;
+z-index: 10;
+}
+
+.content {
+width: 100%;
+}
+
+ul.nice-menu-down {
+float: left;
+border: 0;
+}
+
+ul.nice-menu, ul.nice-menu ul {
+list-style: none;
+padding: 0;
+margin: 0;
+/*border-top: 1px solid #ccc;*/
+}
+
+ul.nice-menu, ul.nice-menu ul {
+z-index: 5;
+position: relative;
+}
+
+.footer .content ul#nice-menu-2 li {
+width: auto;
+height: auto;
+list-style: none;
+float: left;
+padding: 0 25px 0 0;
+border: 0px !important;
+}
+
+.footer .content ul.nice-menu-down li {
+background: none !important;
+}
+
+ul.nice-menu li {
+margin: 0;
+}
+
+ul.nice-menu-down li {
+border-top: 1px solid #ccc;
+}
+
+.nice-menu li {
+display: list-item;
+text-align: -webkit-match-parent;
+}
+
+.footer .content ul#nice-menu-2 a {
+color: white;
+background: none !important;
+}
+
+ul.nice-menu a {
+padding: 0.3em 5px 0.3em 5px;
+}
+
+ul.nice-menu a {
+display: block;
+}
+/* ========== Footer style end ================= */

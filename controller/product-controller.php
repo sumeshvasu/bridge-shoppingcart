@@ -242,5 +242,24 @@ class ProductController extends AppController
         else
             return false;
     }
+    
+    /**
+     * Empty cart after shopping
+     * @param int $user_id
+     * 
+     * @author Jeny Devassy <jeny.devassy@bridge-india.in>
+     * @date 12 Sep 2014
+     */
+    public function delete_purchases($user_id)
+    {
+        if(empty($user_id))
+            return false;
+        
+        $result = $this->database->delete_pending_purchases($user_id);
+        if($result)
+            return $result;
+        else
+            return false;
+    }
 
 }

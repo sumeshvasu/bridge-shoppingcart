@@ -1,11 +1,11 @@
 <?php
-
 /**
  * @project Bridge shoppingcart
  * Main Index page
  *
  */
-if (session_status() == PHP_SESSION_NONE) {
+//if (session_status() == PHP_SESSION_NONE) {
+if (!session_start()) {
     session_start();
 }
 

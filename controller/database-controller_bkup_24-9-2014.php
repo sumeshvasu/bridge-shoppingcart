@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * modified by jeny for identification
+ */
 /**
  * @project Bridge shoppingcart
  * Manage database queries and methods

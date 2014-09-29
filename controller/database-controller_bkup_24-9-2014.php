@@ -1,6 +1,7 @@
 <?php
 /*
- * modified by jeny for identification
+ * modified by jeny for 
+ * 
  */
 /**
  * @project Bridge shoppingcart
